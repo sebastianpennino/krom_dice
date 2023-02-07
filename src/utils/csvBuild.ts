@@ -6,8 +6,8 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   return [
     [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
     [
-      "VE:",
-      "PIFIA",
+      "TN:",
+      "BOTCH",
       "1R",
       "1R",
       "2R",
@@ -22,16 +22,16 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
     [
       `${targetNumber}`,
       "%",
-      "Good",
-      "Bad",
-      "Good",
-      "Bad",
-      "Good",
-      "Bad",
-      "Good",
-      "Bad",
-      "Good",
-      "Bad",
+      "Hit",
+      "Miss",
+      "Hit",
+      "Miss",
+      "Hit",
+      "Miss",
+      "Hit",
+      "Miss",
+      "Hit",
+      "Miss",
     ],
   ];
 };
