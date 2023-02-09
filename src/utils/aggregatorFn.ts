@@ -3,7 +3,7 @@
  */
 import { DiceFaceT } from "../types/constants.js";
 import { AggregatorFn, validWeightResults } from "../types/validValues.js";
-import { reduceNumericDiceRoll, diceRoll } from "./diceRoll.js";
+import { diceRoll } from "./diceRoll.js";
 
 export const cacho25LetterAggregatorFn: AggregatorFn = (
   rolls,
@@ -115,9 +115,8 @@ export const bobAggregatorFn: AggregatorFn = (
   const totalRolls = rolls;
 
   // threshold is always two botch after the first success
-  const t100 = requiredSuccesses > 1 ? Math.ceil(requiredSuccesses/2) : 1;
+  const t100 = requiredSuccesses > 1 ? Math.ceil(requiredSuccesses / 2) : 1;
 
-  
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
@@ -359,8 +358,15 @@ export const baseAggregatorFn: AggregatorFn = (
   const totalRolls = rolls;
 
   while (rolls > 0) {
-    const diceR = diceRoll(numDice, faces);
-    const rst: number = reduceNumericDiceRoll(diceR);
+    const currentRoll = diceRoll(numDice, faces);
+    const good = currentRoll.filter((r: validWeightResults) => {
+      return r === DiceFaceT.S;
+    }).length;
+    const bad = currentRoll.filter((r: validWeightResults) => {
+      return r === DiceFaceT.B;
+    }).length;
+
+    const rst = good - bad;
 
     if (rst >= 0) {
       if (rst >= requiredSuccesses) {

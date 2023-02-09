@@ -1,17 +1,16 @@
 import { DiceFaceT, Flavors } from "./constants.js";
 
-export type validWeightResults = DiceFaceT.B | DiceFaceT.F | DiceFaceT.S;
-export type validNumericWeightsResults = -1 | 0 | 1 | 2;
+export type validWeightResults = DiceFaceT.B | DiceFaceT.F | DiceFaceT.S | DiceFaceT.SS;
 
 export type MappingFn = (
   val: number,
   targetNumber: number
-) => validNumericWeightsResults | validWeightResults;
+) => validWeightResults;
 
 export type AggregatorFn = (
   rolls: number, 
   numDice: number, 
-  faces: any[], // validNumericWeightsResults[] | validWeightResults[], 
+  faces: validWeightResults[], 
   requiredSuccesses: number
 ) => AggregatorFnReturn
 

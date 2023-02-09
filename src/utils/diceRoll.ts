@@ -23,12 +23,6 @@ export const diceRoll = <T>(numDice: number, diceFaces: Array<T>) => {
   return results;
 };
 
-export const reduceNumericDiceRoll = (diceResultsArr: number[]) => {
-  return diceResultsArr.reduce((acc: number, val: number) => {
-    return acc + val;
-  }, 0);
-};
-
 export const simulateRolls: DiceRollAggregatorFn = (
   rolls,
   numDice,

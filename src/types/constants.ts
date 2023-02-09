@@ -9,10 +9,8 @@ import {
   frank50SpecialAggregatorFn,
 } from "../utils/aggregatorFn.js";
 import {
-  baseLetterMapFn,
-  baseNumMapFn,
+  baseMapFn,
   dsMapFn,
-  kaneDsMapFn,
   plusMapFn,
 } from "../utils/mapFn.js";
 import { AggregatorFn, MappingFn } from "./validValues.js";
@@ -34,6 +32,7 @@ export enum Flavors {
 export enum DiceFaceT {
   B = "blunder",
   S = "success",
+  SS = "double_success",
   F = "fail",
 }
 
@@ -44,17 +43,17 @@ export enum DiceResults  {
 }
 
 export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
-  [Flavors.STD]: baseNumMapFn,
+  [Flavors.STD]: baseMapFn,
   [Flavors.PLUS]: plusMapFn,
   [Flavors.DS]: dsMapFn,
-  [Flavors.KANE]: baseLetterMapFn,
-  [Flavors.KANEDS]: kaneDsMapFn,
-  [Flavors.CACHO25]: baseLetterMapFn,
-  [Flavors.CACHO50]: baseLetterMapFn,
-  [Flavors.KANECRIS]: baseLetterMapFn,
-  [Flavors.FRANK25]: baseLetterMapFn,
-  [Flavors.FRANK50S]: baseLetterMapFn,
-  [Flavors.BOB]: baseLetterMapFn,
+  [Flavors.KANE]: baseMapFn,
+  [Flavors.KANEDS]: dsMapFn,
+  [Flavors.CACHO25]: baseMapFn,
+  [Flavors.CACHO50]: baseMapFn,
+  [Flavors.KANECRIS]: baseMapFn,
+  [Flavors.FRANK25]: baseMapFn,
+  [Flavors.FRANK50S]: baseMapFn,
+  [Flavors.BOB]: baseMapFn,
 };
 
 export const FlavorMapFnAggregator: Record<Flavors, AggregatorFn> = {
