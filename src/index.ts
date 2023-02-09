@@ -5,35 +5,56 @@ import {
   createCSVContent,
 } from "./utils/csvBuild.js";
 
-const simulations = 1_000_000;
-const diceFaces = 10;
-const targetNumber = 3;
-const flavor = Flavors.KANECRIS;
-
 const makeTheCompleteCSVTable = (
   simulations: number,
   diceFaces: number,
   targetNumber: number,
   flavor: Flavors
 ) => {
+  console.log(`*** ${flavor} ***`);
   const dir = `./build/${flavor}/`;
-  const file = `${flavor}_d${diceFaces}_TN${targetNumber}.csv`;
+  //const file = `${flavor}_d${diceFaces}_TN${targetNumber}.csv`;
 
-    checkAndCreateDirectory(dir)
+  const direction: Record<number, string> = {
+    3: "Left",
+    4: "Right",
+    5: "Left",
+    6: "Right",
+    7: "Left",
+    8: "Right",
+    9: "Right",
+  };
 
-    const table = createCSVContent(
-      simulations,
-      diceFaces,
-      targetNumber,
-      flavor
-    );
-    const csvContent = table.map((e) => e.join(",")).join("\n");
+  const file = `${flavor}_d${diceFaces}_${direction[targetNumber]}.csv`;
 
-    createCSV(dir, file, csvContent);
+  checkAndCreateDirectory(dir);
+
+  const table = createCSVContent(simulations, diceFaces, targetNumber, flavor);
+  const csvContent = table.map((e) => e.join(",")).join("\n");
+
+  createCSV(dir, file, "\n" + csvContent);
 };
 
-// makeTheCompleteCSVTable(simulations, diceFaces, targetNumber, flavor);
+const simulations = 1_000_000;
+const diceFaces = 10;
+// const targetNumber = 3;
+// const flavor = Flavors.DS;
 
-for (let jj = 3; jj < 10; jj++) {
-  makeTheCompleteCSVTable(simulations, diceFaces, jj, flavor);
-}
+const runAllFlavors = () => {
+  Object.values({ ...Flavors }).forEach((flav) => {
+    for (let targetN = 3; targetN < 10; targetN++) {
+      makeTheCompleteCSVTable(simulations, diceFaces, targetN, flav);
+    }
+  });
+};
+
+const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
+  const startTN = 3;
+  const maxTN = 9;
+
+  for (let targetN = startTN; targetN <= maxTN; targetN++) {
+    makeTheCompleteCSVTable(simulations, diceFaces, targetN, flavor);
+  }
+};
+
+runSingleFlavor(Flavors.STD)
