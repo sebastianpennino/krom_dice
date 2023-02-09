@@ -46,10 +46,11 @@ export const aggregator: AggregatorFn = (
   }
 
   const hit = ref.successArr.reduce((acc: number, cur: number) => acc + cur, 0);
+  const compare = ref.miss + ref.botch + hit
 
-  if (ref.miss + ref.botch + hit !== ref.totalRolls) {
+  if (compare !== ref.totalRolls) {
     throw new Error(
-      `Missing cases! ${ref.miss + ref.botch + hit - ref.totalRolls}`
+      `Missing cases! ${compare} != ${ref.totalRolls}`,
     );
   }
 
@@ -99,6 +100,23 @@ export const crisKaneSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
     }
   }
 };
+
+export const rachelSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
+  const threshold = Math.ceil(nd / 2)
+
+  if (good >= rs) {
+    // success
+    ref.successArr[good - 1]++;
+  } else {
+    // not-success
+    if (bad >= threshold) {
+      ref.botch++;
+    } else {
+      ref.miss++;
+    }
+  }
+};
+
 
 export const frank25SolverFn: SolverFn = (ref, good, bad, nd, rs) => {
   // threshold adjusted to number of thrown dice
@@ -166,12 +184,12 @@ export const bobSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
 };
 
 export const frank50SSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  const thresholdCacho50S = rs > 2 ? Math.ceil(nd / 2) : 1;
+  const thresholdF50S = rs > 2 ? Math.ceil(nd / 2) : 1;
   if (good >= rs) {
     ref.successArr[good - 1]++;
   } else {
     // threshold 1-2 (1) 3-4 (2) and so on...
-    if (bad >= thresholdCacho50S) {
+    if (bad >= thresholdF50S) {
       ref.botch++;
     } else {
       ref.miss++;

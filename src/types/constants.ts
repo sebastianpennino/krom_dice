@@ -6,6 +6,7 @@ import {
   frank25SolverFn,
   frank50SSolverFn,
   kaneSolverFn,
+  rachelSolverFn,
   stdSolverFn,
 } from "../utils/solverFn.js";
 import {
@@ -27,6 +28,7 @@ export enum Flavors {
   FRANK25 = "frank25",
   FRANK50S = "frank50S",
   BOB = "bob",
+  RACHEL = "rachel",
 }
 
 export enum DiceFaceT {
@@ -54,6 +56,7 @@ export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.FRANK25]: baseMapFn,
   [Flavors.FRANK50S]: baseMapFn,
   [Flavors.BOB]: baseMapFn,
+  [Flavors.RACHEL]: dsMapFn, // pifia 2
 };
 
 export const FlavorMapFnResolver: Record<Flavors, SolverFn> = {
@@ -68,4 +71,5 @@ export const FlavorMapFnResolver: Record<Flavors, SolverFn> = {
   [Flavors.FRANK25]: frank25SolverFn,
   [Flavors.FRANK50S]: frank50SSolverFn,
   [Flavors.BOB]: bobSolverFn,
+  [Flavors.RACHEL]: rachelSolverFn,
 };
