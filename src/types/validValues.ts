@@ -1,6 +1,6 @@
-import { Flavors } from "./constants.js";
+import { DiceFaceT, Flavors } from "./constants.js";
 
-export type validWeightResults = "P" | "F" | "S";
+export type validWeightResults = DiceFaceT.B | DiceFaceT.F | DiceFaceT.S;
 export type validNumericWeightsResults = -1 | 0 | 1 | 2;
 
 export type MappingFn = (
@@ -16,9 +16,9 @@ export type AggregatorFn = (
 ) => AggregatorFnReturn
 
 export type AggregatorFnReturn = {
-  fail: number, 
+  miss: number, 
   botch: number, 
-  sucess: number,
+  hit: number,
 }
 
 export type DiceRollAggregatorFn = (

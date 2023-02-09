@@ -9,7 +9,7 @@ import {
   frank50SpecialAggregatorFn,
 } from "../utils/aggregatorFn.js";
 import {
-  baseMapFn,
+  baseLetterMapFn,
   baseNumMapFn,
   dsMapFn,
   kaneDsMapFn,
@@ -31,18 +31,30 @@ export enum Flavors {
   BOB = "bob",
 }
 
+export enum DiceFaceT {
+  B = "blunder",
+  S = "success",
+  F = "fail",
+}
+
+export enum DiceResults  {
+  Hit = "hit",
+  Miss = "miss",
+  Botch = "botch",
+}
+
 export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.STD]: baseNumMapFn,
   [Flavors.PLUS]: plusMapFn,
   [Flavors.DS]: dsMapFn,
-  [Flavors.KANE]: baseMapFn,
+  [Flavors.KANE]: baseLetterMapFn,
   [Flavors.KANEDS]: kaneDsMapFn,
-  [Flavors.CACHO25]: baseMapFn,
-  [Flavors.CACHO50]: baseMapFn,
-  [Flavors.KANECRIS]: baseMapFn,
-  [Flavors.FRANK25]: baseMapFn,
-  [Flavors.FRANK50S]: baseMapFn,
-  [Flavors.BOB]: baseMapFn,
+  [Flavors.CACHO25]: baseLetterMapFn,
+  [Flavors.CACHO50]: baseLetterMapFn,
+  [Flavors.KANECRIS]: baseLetterMapFn,
+  [Flavors.FRANK25]: baseLetterMapFn,
+  [Flavors.FRANK50S]: baseLetterMapFn,
+  [Flavors.BOB]: baseLetterMapFn,
 };
 
 export const FlavorMapFnAggregator: Record<Flavors, AggregatorFn> = {

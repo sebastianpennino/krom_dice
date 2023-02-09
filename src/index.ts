@@ -11,9 +11,8 @@ const makeTheCompleteCSVTable = (
   targetNumber: number,
   flavor: Flavors
 ) => {
-  console.log(`*** ${flavor} ***`);
+  console.log(`*** F:${flavor} - TN:${targetNumber} ***`);
   const dir = `./build/${flavor}/`;
-  //const file = `${flavor}_d${diceFaces}_TN${targetNumber}.csv`;
 
   const direction: Record<number, string> = {
     3: "Left",
@@ -37,13 +36,11 @@ const makeTheCompleteCSVTable = (
 
 const simulations = 1_000_000;
 const diceFaces = 10;
-// const targetNumber = 3;
-// const flavor = Flavors.DS;
 
 const runAllFlavors = () => {
-  Object.values({ ...Flavors }).forEach((flav) => {
+  Object.values({ ...Flavors }).forEach((flavor: Flavors) => {
     for (let targetN = 3; targetN < 10; targetN++) {
-      makeTheCompleteCSVTable(simulations, diceFaces, targetN, flav);
+      makeTheCompleteCSVTable(simulations, diceFaces, targetN, flavor);
     }
   });
 };

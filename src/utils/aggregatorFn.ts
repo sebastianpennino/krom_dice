@@ -1,6 +1,7 @@
 /**
  * Different aggregator functions
  */
+import { DiceFaceT } from "../types/constants.js";
 import { AggregatorFn, validWeightResults } from "../types/validValues.js";
 import { reduceNumericDiceRoll, diceRoll } from "./diceRoll.js";
 
@@ -10,12 +11,12 @@ export const cacho25LetterAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // Cacho25: at least 25% of the dice are "P" --> automatic botch
   // 1 to 4 --> 1 dice=1 --> botch // 5 to 8 --> 2 dice=1 --> botch
@@ -24,10 +25,10 @@ export const cacho25LetterAggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (bad >= thresholdCacho25) {
@@ -36,20 +37,20 @@ export const cacho25LetterAggregatorFn: AggregatorFn = (
       if (good >= requiredSuccesses) {
         successArr[good - 1]++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const cacho50LetterAggregatorFn: AggregatorFn = (
@@ -58,12 +59,12 @@ export const cacho50LetterAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // Cacho50: at least 50% of the dice are "P" --> automatic botch
   // 1 to 2 --> 1 dice=1 --> botch // 3 to 4 --> 2 dice=1 --> botch
@@ -72,10 +73,10 @@ export const cacho50LetterAggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (bad >= thresholdCacho50) {
@@ -84,20 +85,20 @@ export const cacho50LetterAggregatorFn: AggregatorFn = (
       if (good >= requiredSuccesses) {
         successArr[good - 1]++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const bobAggregatorFn: AggregatorFn = (
@@ -106,12 +107,12 @@ export const bobAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // threshold is always two botch after the first success
   const t100 = requiredSuccesses > 1 ? Math.ceil(requiredSuccesses/2) : 1;
@@ -120,10 +121,10 @@ export const bobAggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     // Check for botch FIRST
@@ -133,20 +134,20 @@ export const bobAggregatorFn: AggregatorFn = (
       if (good >= requiredSuccesses) {
         successArr[good - 1]++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const frank50SpecialAggregatorFn: AggregatorFn = (
@@ -155,12 +156,12 @@ export const frank50SpecialAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // threshold adjusted to number of required success
   const thresholdCacho50S = requiredSuccesses > 2 ? Math.ceil(numDice / 2) : 1;
@@ -170,10 +171,10 @@ export const frank50SpecialAggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (good >= requiredSuccesses) {
@@ -184,20 +185,20 @@ export const frank50SpecialAggregatorFn: AggregatorFn = (
       if (bad >= thresholdCacho50S) {
         botch++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const frank25AggregatorFn: AggregatorFn = (
@@ -206,12 +207,12 @@ export const frank25AggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // threshold adjusted to number of thrown dice
   const thresholdCacho25 = numDice > 4 ? Math.ceil(numDice / 4) : 1;
@@ -221,10 +222,10 @@ export const frank25AggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (good >= requiredSuccesses) {
@@ -235,20 +236,20 @@ export const frank25AggregatorFn: AggregatorFn = (
       if (bad >= thresholdCacho25) {
         botch++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const crisLetterAggregatorFn: AggregatorFn = (
@@ -257,22 +258,22 @@ export const crisLetterAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // KANE: any dice=1 doesn't substract success.
   // botch occurs if theres at least one bad dice AND the number of required successes was not reach
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (good >= requiredSuccesses) {
@@ -283,20 +284,20 @@ export const crisLetterAggregatorFn: AggregatorFn = (
       if (bad > 0) {
         botch++;
       } else {
-        fail++;
+        miss++;
       }
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const baseLetterAggregatorFn: AggregatorFn = (
@@ -305,12 +306,12 @@ export const baseLetterAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   // KANE: any dice=1 doesn't substract success.
   // botch occurs if no success is present and at least one dice is a one
@@ -318,10 +319,10 @@ export const baseLetterAggregatorFn: AggregatorFn = (
   while (rolls > 0) {
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === "S";
+      return r === DiceFaceT.S;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
-      return r === "P";
+      return r === DiceFaceT.B;
     }).length;
 
     if (good >= requiredSuccesses) {
@@ -329,19 +330,19 @@ export const baseLetterAggregatorFn: AggregatorFn = (
     } else if (good === 0 && bad > 0) {
       botch++;
     } else {
-      fail++;
+      miss++;
     }
 
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };
 
 export const baseAggregatorFn: AggregatorFn = (
@@ -350,12 +351,12 @@ export const baseAggregatorFn: AggregatorFn = (
   faces,
   requiredSuccesses
 ) => {
-  let fail = 0,
+  let miss = 0,
     botch = 0;
   const successArr = Array.from({ length: 50 }, function (_, i) {
     return 0;
   }); // just to be sure
-  const toalRolls = rolls;
+  const totalRolls = rolls;
 
   while (rolls > 0) {
     const diceR = diceRoll(numDice, faces);
@@ -365,7 +366,7 @@ export const baseAggregatorFn: AggregatorFn = (
       if (rst >= requiredSuccesses) {
         successArr[rst - 1]++;
       } else {
-        fail++;
+        miss++;
       }
     } else {
       botch++;
@@ -374,11 +375,11 @@ export const baseAggregatorFn: AggregatorFn = (
     rolls--;
   }
 
-  const sucess = successArr.reduce((acc, cur) => acc + cur, 0);
+  const hit = successArr.reduce((acc, cur) => acc + cur, 0);
 
-  if (fail + botch + sucess !== toalRolls) {
-    throw new Error(`Missing cases! ${fail + botch + sucess - toalRolls}`);
+  if (miss + botch + hit !== totalRolls) {
+    throw new Error(`Missing cases! ${miss + botch + hit - totalRolls}`);
   }
 
-  return { fail, botch, sucess };
+  return { miss, botch, hit };
 };

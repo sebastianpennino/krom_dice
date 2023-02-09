@@ -7,7 +7,7 @@ const getBaseRowsOriginal = (targetNumber: number, flavor?: Flavors) => {
     [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
     [
       "TN:",
-      "BOTCH",
+      "Botch",
       "1R",
       "1R",
       "2R",
@@ -38,7 +38,7 @@ const getBaseRowsOriginal = (targetNumber: number, flavor?: Flavors) => {
 
 const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   return [
-    [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+    [`${flavor}`, "*", "*", "*", "-", "-", "-", "*", "*", "*", "-", "-", "-"],
     [
       "TN:",
       "1R",
@@ -53,25 +53,19 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
       "4R",
       "4R",
       "4R",
-      "5R",
-      "5R",
-      "5R",
     ],
     [
       `${targetNumber}`,
-      "botch",
+      "Botch",
       "Hit",
       "Miss",
-      "botch",
+      "Botch",
       "Hit",
       "Miss",
-      "botch",
+      "Botch",
       "Hit",
       "Miss",
-      "botch",
-      "Hit",
-      "Miss",
-      "botch",
+      "Botch",
       "Hit",
       "Miss",
     ],
@@ -99,22 +93,18 @@ export const createCSVContent = (
   flavor: Flavors
 ) => {
   const filledRows = getDataRows(diceFaces).map((row, idx) => {
-    const maxLoops = 5; // 5 loops per row (hardcoded)
+    const maxLoops = 4; // 1 to 4 required successes (hardcoded)
 
-    for (let req = 1; req <= maxLoops; req++) {
+    for (let requiredSuccesses = 1; requiredSuccesses <= maxLoops; requiredSuccesses++) {
       const [botchPercent, sucessPercent, failPercent] = simulateRolls(
         simulations,
         idx + 1,
         diceFaces,
         targetNumber,
-        req,
+        requiredSuccesses,
         flavor
       );
-      // if (req === 1) {
-      //   row.push(botchPercent, sucessPercent, failPercent);
-      // } else {
-      //   row.push(sucessPercent, failPercent);
-      // }
+
       row.push(botchPercent, sucessPercent, failPercent);
     }
 

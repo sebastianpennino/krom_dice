@@ -47,7 +47,7 @@ export const simulateRolls: DiceRollAggregatorFn = (
     mappingFn
   );
   const aggregatorFn = FlavorMapFnAggregator[flavor];
-  const { fail, botch, sucess } = aggregatorFn(
+  const { miss, botch, hit } = aggregatorFn(
     rolls,
     numDice,
     faces,
@@ -56,7 +56,7 @@ export const simulateRolls: DiceRollAggregatorFn = (
 
   return [
     Number(botch / rolls).toFixed(3),
-    Number(sucess / rolls).toFixed(3),
-    Number(fail / rolls).toFixed(3)
+    Number(hit / rolls).toFixed(3),
+    Number(miss / rolls).toFixed(3)
   ]
 };

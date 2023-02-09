@@ -1,16 +1,17 @@
 /**
  * Different mapper functions to determine the faces of a dice
  */
+import { DiceFaceT } from "../types/constants.js";
 import { MappingFn } from "../types/validValues.js";
 
 /** basic letter map function (returns P, F, S) */
-export const baseMapFn: MappingFn = (val, targetNumber) => {
+export const baseLetterMapFn: MappingFn = (val, targetNumber) => {
   if (val === 1) {
-    return "P";
+    return DiceFaceT.B;
   } else if (val < targetNumber) {
-    return "F";
+    return DiceFaceT.F;
   } else {
-    return "S";
+    return DiceFaceT.S;
   }
 };
 
@@ -33,7 +34,7 @@ export const plusMapFn: MappingFn = (val, targetNumber) => {
   return baseNumMapFn(val, targetNumber);
 };
 
-/** used by DS, KaneDS */
+/** used by DS */
 export const dsMapFn: MappingFn = (val, targetNumber) => {
   if (val === 2) {
     // DS: 1 and 2 are botch!
@@ -42,9 +43,10 @@ export const dsMapFn: MappingFn = (val, targetNumber) => {
   return baseNumMapFn(val, targetNumber);
 };
 
+/** used by Kane-DS */
 export const kaneDsMapFn: MappingFn = (val, targetNumber) => {
   if (val == 2) {
-    return "P";
+    return DiceFaceT.B;
   }
-  return baseMapFn(val, targetNumber)
+  return baseLetterMapFn(val, targetNumber)
 }
