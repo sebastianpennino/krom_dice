@@ -1,4 +1,4 @@
-import { baseAggregatorFn, baseLetterAggregatorFn, cacho25LetterAggregatorFn, cacho50LetterAggregatorFn } from "../utils/aggregatorFn.js";
+import { baseAggregatorFn, baseLetterAggregatorFn, cacho25LetterAggregatorFn, cacho50LetterAggregatorFn, crisLetterAggregatorFn } from "../utils/aggregatorFn.js";
 import { baseMapFn, baseNumMapFn, dsMapFn, kaneDsMapFn, plusMapFn } from "../utils/mapFn.js";
 import { AggregatorFn, MappingFn } from "./validValues.js";
 
@@ -7,10 +7,10 @@ export enum Flavors {
   PLUS = "plus",
   DS = "darksouls",
   KANE = "kane",
+  KANECRIS = "kane-c",
   KANEDS = "kane-ds",
   CACHO25 = "cacho25",
   CACHO50 = "cacho50",
-  ROB = "rob",
 }
 
 export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
@@ -21,7 +21,7 @@ export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.KANEDS]: kaneDsMapFn,
   [Flavors.CACHO25]: baseMapFn,
   [Flavors.CACHO50]: baseMapFn,
-  [Flavors.ROB]: baseMapFn,
+  [Flavors.KANECRIS]: baseMapFn,
 };
 
 export const FlavorMapFnAggregator: Record<Flavors, AggregatorFn> = {
@@ -32,5 +32,5 @@ export const FlavorMapFnAggregator: Record<Flavors, AggregatorFn> = {
   [Flavors.KANEDS]: baseLetterAggregatorFn,
   [Flavors.CACHO25]: cacho25LetterAggregatorFn,
   [Flavors.CACHO50]: cacho50LetterAggregatorFn,
-  [Flavors.ROB]: baseAggregatorFn,
+  [Flavors.KANECRIS]: crisLetterAggregatorFn,
 };

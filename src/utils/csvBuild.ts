@@ -2,7 +2,7 @@ import { appendFileSync, existsSync, mkdirSync, rmSync } from "fs";
 import { Flavors } from "../types/constants.js";
 import { simulateRolls } from "./diceRoll.js";
 
-const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
+const getBaseRowsOriginal = (targetNumber: number, flavor?: Flavors) => {
   return [
     [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
     [
@@ -30,6 +30,48 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
       "Miss",
       "Hit",
       "Miss",
+      "Hit",
+      "Miss",
+    ],
+  ];
+};
+
+const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
+  return [
+    [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+    [
+      "TN:",
+      "1R",
+      "1R",
+      "1R",
+      "2R",
+      "2R",
+      "2R",
+      "3R",
+      "3R",
+      "3R",
+      "4R",
+      "4R",
+      "4R",
+      "5R",
+      "5R",
+      "5R",
+    ],
+    [
+      `${targetNumber}`,
+      "botch",
+      "Hit",
+      "Miss",
+      "botch",
+      "Hit",
+      "Miss",
+      "botch",
+      "Hit",
+      "Miss",
+      "botch",
+      "Hit",
+      "Miss",
+      "botch",
       "Hit",
       "Miss",
     ],
@@ -68,11 +110,12 @@ export const createCSVContent = (
         req,
         flavor
       );
-      if (req === 1) {
-        row.push(botchPercent, sucessPercent, failPercent);
-      } else {
-        row.push(sucessPercent, failPercent);
-      }
+      // if (req === 1) {
+      //   row.push(botchPercent, sucessPercent, failPercent);
+      // } else {
+      //   row.push(sucessPercent, failPercent);
+      // }
+      row.push(botchPercent, sucessPercent, failPercent);
     }
 
     return row;

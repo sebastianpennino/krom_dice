@@ -8,7 +8,7 @@ import {
 const simulations = 1_000_000;
 const diceFaces = 10;
 const targetNumber = 3;
-const flavor = Flavors.STD;
+const flavor = Flavors.KANECRIS;
 
 const makeTheCompleteCSVTable = (
   simulations: number,
