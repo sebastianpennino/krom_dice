@@ -1,19 +1,19 @@
 import {
-  baseAggregatorFn,
-  baseLetterAggregatorFn,
-  cacho25LetterAggregatorFn,
-  cacho50LetterAggregatorFn,
-  crisLetterAggregatorFn,
-  bobAggregatorFn,
-  frank25AggregatorFn,
-  frank50SpecialAggregatorFn,
-} from "../utils/aggregatorFn.js";
+  bobSolverFn,
+  cacho25SolverFn,
+  cacho50SolverFn,
+  crisKaneSolverFn,
+  frank25SolverFn,
+  frank50SSolverFn,
+  kaneSolverFn,
+  stdSolverFn,
+} from "../utils/solverFn.js";
 import {
   baseMapFn,
   dsMapFn,
   plusMapFn,
 } from "../utils/mapFn.js";
-import { AggregatorFn, MappingFn } from "./validValues.js";
+import { MappingFn, SolverFn } from "./validValues.js";
 
 export enum Flavors {
   STD = "std",
@@ -43,11 +43,11 @@ export enum DiceResults  {
 }
 
 export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
-  [Flavors.STD]: baseMapFn,
   [Flavors.PLUS]: plusMapFn,
   [Flavors.DS]: dsMapFn,
-  [Flavors.KANE]: baseMapFn,
   [Flavors.KANEDS]: dsMapFn,
+  [Flavors.STD]: baseMapFn,
+  [Flavors.KANE]: baseMapFn,
   [Flavors.CACHO25]: baseMapFn,
   [Flavors.CACHO50]: baseMapFn,
   [Flavors.KANECRIS]: baseMapFn,
@@ -56,16 +56,16 @@ export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.BOB]: baseMapFn,
 };
 
-export const FlavorMapFnAggregator: Record<Flavors, AggregatorFn> = {
-  [Flavors.STD]: baseAggregatorFn,
-  [Flavors.PLUS]: baseAggregatorFn,
-  [Flavors.DS]: baseAggregatorFn,
-  [Flavors.KANE]: baseLetterAggregatorFn,
-  [Flavors.KANEDS]: baseLetterAggregatorFn,
-  [Flavors.CACHO25]: cacho25LetterAggregatorFn,
-  [Flavors.CACHO50]: cacho50LetterAggregatorFn,
-  [Flavors.KANECRIS]: crisLetterAggregatorFn,
-  [Flavors.FRANK25]: frank25AggregatorFn,
-  [Flavors.FRANK50S]: frank50SpecialAggregatorFn,
-  [Flavors.BOB]: bobAggregatorFn,
+export const FlavorMapFnResolver: Record<Flavors, SolverFn> = {
+  [Flavors.STD]: stdSolverFn,
+  [Flavors.PLUS]: stdSolverFn,
+  [Flavors.DS]: stdSolverFn,
+  [Flavors.KANE]: kaneSolverFn,
+  [Flavors.KANEDS]: kaneSolverFn,
+  [Flavors.CACHO25]: cacho25SolverFn,
+  [Flavors.CACHO50]: cacho50SolverFn,
+  [Flavors.KANECRIS]: crisKaneSolverFn,
+  [Flavors.FRANK25]: frank25SolverFn,
+  [Flavors.FRANK50S]: frank50SSolverFn,
+  [Flavors.BOB]: bobSolverFn,
 };

@@ -11,7 +11,7 @@ const makeTheCompleteCSVTable = (
   targetNumber: number,
   flavor: Flavors
 ) => {
-  console.log(`*** F:${flavor} - TN:${targetNumber} ***`);
+  console.log(`*** ${flavor} - TN:${targetNumber} ***`);
   const dir = `./build/${flavor}/`;
 
   const direction: Record<number, string> = {
@@ -24,7 +24,8 @@ const makeTheCompleteCSVTable = (
     9: "Right",
   };
 
-  const file = `${flavor}_d${diceFaces}_${direction[targetNumber]}.csv`;
+  // const file = `${flavor}_d${diceFaces}_${direction[targetNumber]}.csv`;
+  const file = `${flavor}_d${diceFaces}_unified.csv`;
 
   checkAndCreateDirectory(dir);
 
@@ -55,3 +56,4 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
 };
 
 runSingleFlavor(Flavors.STD)
+// runAllFlavors()

@@ -1,9 +1,6 @@
-import {
-  FlavorMapFnAggregator,
-  FlavorMapFnRecord,
-  Flavors,
-} from "../types/constants.js";
+import { FlavorMapFnRecord, Flavors } from "../types/constants.js";
 import { DiceRollAggregatorFn } from "../types/validValues.js";
+import { aggregator } from "./solverFn.js";
 import { generateDiceFacesWithWeightValues } from "./diceFaces.js";
 
 export const randomIntFromInterval = (min = 1, max = 6) => {
@@ -23,7 +20,7 @@ export const diceRoll = <T>(numDice: number, diceFaces: Array<T>) => {
   return results;
 };
 
-export const simulateRolls: DiceRollAggregatorFn = (
+export const simulateRollGroup: DiceRollAggregatorFn = (
   rolls,
   numDice,
   diceFaces,
@@ -40,17 +37,16 @@ export const simulateRolls: DiceRollAggregatorFn = (
     targetNumber,
     mappingFn
   );
-  const aggregatorFn = FlavorMapFnAggregator[flavor];
-  const { miss, botch, hit } = aggregatorFn(
+  const { miss, botch, hit } = aggregator(
     rolls,
     numDice,
     faces,
-    requiredSuccesses
+    requiredSuccesses,
+    flavor
   );
-
   return [
     Number(botch / rolls).toFixed(3),
     Number(hit / rolls).toFixed(3),
-    Number(miss / rolls).toFixed(3)
-  ]
+    Number(miss / rolls).toFixed(3),
+  ];
 };

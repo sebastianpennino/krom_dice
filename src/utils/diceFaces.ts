@@ -1,4 +1,4 @@
-import { MappingFn, validNumericWeightsResults, validWeightResults } from "../types/validValues.js";
+import { MappingFn } from "../types/validValues.js";
 
 /**
  * Returns an array with a secuence of numbers, starting with 1

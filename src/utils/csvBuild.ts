@@ -1,40 +1,6 @@
 import { appendFileSync, existsSync, mkdirSync, rmSync } from "fs";
 import { Flavors } from "../types/constants.js";
-import { simulateRolls } from "./diceRoll.js";
-
-const getBaseRowsOriginal = (targetNumber: number, flavor?: Flavors) => {
-  return [
-    [`${flavor}`, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
-    [
-      "TN:",
-      "Botch",
-      "1R",
-      "1R",
-      "2R",
-      "2R",
-      "3R",
-      "3R",
-      "4R",
-      "4R",
-      "5R",
-      "5R",
-    ],
-    [
-      `${targetNumber}`,
-      "%",
-      "Hit",
-      "Miss",
-      "Hit",
-      "Miss",
-      "Hit",
-      "Miss",
-      "Hit",
-      "Miss",
-      "Hit",
-      "Miss",
-    ],
-  ];
-};
+import { simulateRollGroup } from "./diceRoll.js";
 
 const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   return [
@@ -74,7 +40,6 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
 
 const getDataRows = (faces: number) => {
   return [
-    [`1d${faces}`],
     [`2d${faces}`],
     [`3d${faces}`],
     [`4d${faces}`],
@@ -96,9 +61,9 @@ export const createCSVContent = (
     const maxLoops = 4; // 1 to 4 required successes (hardcoded)
 
     for (let requiredSuccesses = 1; requiredSuccesses <= maxLoops; requiredSuccesses++) {
-      const [botchPercent, sucessPercent, failPercent] = simulateRolls(
+      const [botchPercent, sucessPercent, failPercent] = simulateRollGroup(
         simulations,
-        idx + 1,
+        idx + 2, // we start at 2d10
         diceFaces,
         targetNumber,
         requiredSuccesses,
