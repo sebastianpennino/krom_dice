@@ -31,7 +31,8 @@ export type SolverFn = (
   good: number,
   bad: number,
   nd: number,
-  rs: number
+  rs: number,
+  cc?: any
 ) => void;
 
 export type AggregatorFnReturn = {

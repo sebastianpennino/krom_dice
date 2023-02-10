@@ -31,6 +31,7 @@ export const aggregator: AggregatorFn = (
   const solver = FlavorMapFnResolver[flavor];
 
   while (rolls > 0) {
+    const extraRoll = diceRoll(1, faces);
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
       return r === DiceFaceT.S;
@@ -40,18 +41,16 @@ export const aggregator: AggregatorFn = (
     }).length;
 
     // Solver will calculate and add to ref.miss, ref.botch and ref.successArr
-    solver(ref, good, bad, numDice, requiredSuccesses);
+    solver(ref, good, bad, numDice, requiredSuccesses, extraRoll);
 
     rolls--;
   }
 
   const hit = ref.successArr.reduce((acc: number, cur: number) => acc + cur, 0);
-  const compare = ref.miss + ref.botch + hit
+  const compare = ref.miss + ref.botch + hit;
 
   if (compare !== ref.totalRolls) {
-    throw new Error(
-      `Missing cases! ${compare} != ${ref.totalRolls}`,
-    );
+    throw new Error(`Missing cases! ${compare} != ${ref.totalRolls}`);
   }
 
   return { miss: ref.miss, botch: ref.botch, hit };
@@ -60,6 +59,40 @@ export const aggregator: AggregatorFn = (
 /**
  * Different solver functions to determine the result of a group of dices
  */
+
+/** Kane with badluck dice */
+export const crisSolverExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
+  if (cc[0] === DiceFaceT.B) {
+    ref.botch++;
+  } else {
+    if (good >= rs) {
+      // success
+      ref.successArr[good - 1]++;
+    } else {
+      ref.miss++;
+    }
+  }
+};
+
+/* standard with badluck dice */
+export const stdSolverExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
+  if (cc[0] === DiceFaceT.B) {
+    ref.botch++;
+  } else {
+    const rst = good - bad;
+
+    if (rst >= 0) {
+      if (rst >= rs) {
+        ref.successArr[rst - 1]++;
+      } else {
+        ref.miss++;
+      }
+    } else {
+      ref.miss++;
+    }
+
+  }
+};
 
 /** Base implementation (standard) */
 export const stdSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
@@ -102,7 +135,7 @@ export const crisKaneSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
 };
 
 export const rachelSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  const threshold = Math.ceil(nd / 2)
+  const threshold = Math.ceil(nd / 2);
 
   if (good >= rs) {
     // success
@@ -116,7 +149,6 @@ export const rachelSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
     }
   }
 };
-
 
 export const frank25SolverFn: SolverFn = (ref, good, bad, nd, rs) => {
   // threshold adjusted to number of thrown dice
