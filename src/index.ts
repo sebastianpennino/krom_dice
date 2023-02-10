@@ -15,12 +15,11 @@ const makeTheCompleteCSVTable = (
   const dir = `./build/${flavor}/`;
 
   const direction: Record<number, string> = {
-    3: "Left",
-    4: "Right",
-    5: "Left",
-    6: "Right",
-    7: "Left",
-    8: "Right",
+    4: "Left",
+    5: "Right",
+    6: "Left",
+    7: "Right",
+    8: "Left",
     9: "Right",
   };
 
@@ -55,5 +54,5 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
   }
 };
 
-runSingleFlavor(Flavors.KANECRIS)
+runSingleFlavor(Flavors.KANECRISDS)
 // runAllFlavors()
