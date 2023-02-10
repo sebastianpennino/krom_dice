@@ -19,9 +19,27 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
       "4R",
       "4R",
       "4R",
+      "5R",
+      "5R",
+      "5R",
+      "6R",
+      "6R",
+      "6R",
+      "7R",
+      "7R",
+      "7R",
     ],
     [
       `${targetNumber}`,
+      "Botch",
+      "Hit",
+      "Miss",
+      "Botch",
+      "Hit",
+      "Miss",
+      "Botch",
+      "Hit",
+      "Miss",
       "Botch",
       "Hit",
       "Miss",
@@ -48,6 +66,12 @@ const getDataRows = (faces: number) => {
     [`7d${faces}`],
     [`8d${faces}`],
     [`9d${faces}`],
+    [`10d${faces}`],
+    [`11d${faces}`],
+    [`12d${faces}`],
+    [`13d${faces}`],
+    [`14d${faces}`],
+    [`15d${faces}`],
   ];
 };
 
@@ -58,9 +82,15 @@ export const createCSVContent = (
   flavor: Flavors
 ) => {
   const filledRows = getDataRows(diceFaces).map((row, idx) => {
-    const maxLoops = 4; // 1 to 4 required successes (hardcoded)
+    //const maxLoops = 4; // 1 to 4 required successes (hardcoded)
 
-    for (let requiredSuccesses = 1; requiredSuccesses <= maxLoops; requiredSuccesses++) {
+    const maxLoops = 7; // 1 to 7 required successes (hardcoded)
+
+    for (
+      let requiredSuccesses = 1;
+      requiredSuccesses <= maxLoops;
+      requiredSuccesses++
+    ) {
       const [botchPercent, sucessPercent, failPercent] = simulateRollGroup(
         simulations,
         idx + 2, // we start at 2d10

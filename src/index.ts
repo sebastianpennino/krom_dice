@@ -55,5 +55,5 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
   }
 };
 
-runSingleFlavor(Flavors.SCC)
+runSingleFlavor(Flavors.KANECRIS)
 // runAllFlavors()
