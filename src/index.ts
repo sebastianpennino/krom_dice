@@ -4,6 +4,7 @@ import {
   createCSV,
   createCSVContent,
 } from "./utils/csvBuild.js";
+import { sum } from '../napi-rs-dice/index.js'
 
 const makeTheCompleteCSVTable = (
   simulations: number,
@@ -54,5 +55,7 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
   }
 };
 
-runSingleFlavor(Flavors.KANECRISDS)
+// runSingleFlavor(Flavors.KANECRISDS)
 // runAllFlavors()
+
+console.log(sum(3, 4));
