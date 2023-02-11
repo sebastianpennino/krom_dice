@@ -1,2 +1,7 @@
 # krom_dice
-dice calculations utilities for a boardgame
+
+Some code utilities for a boardgame
+
+krom_dice -> calculate dice stats based on different methods
+
+
