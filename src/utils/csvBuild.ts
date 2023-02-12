@@ -1,6 +1,7 @@
 import { appendFileSync, existsSync, mkdirSync, rmSync } from "fs";
+import { defaultVersusCfg } from "../types/validValues.js";
 import { Flavors } from "../types/constants.js";
-import { simulateRollGroup } from "./diceRoll.js";
+import { simulateRollGroup, simulateVersusRollGroup } from "./diceRoll.js";
 
 const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   return [
@@ -56,6 +57,72 @@ const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   ];
 };
 
+const getVersusBaseRows = (baseTN: number, TN: number, faces: number) => {
+  return [
+    ["-", "*", "*", "-", "-", "*", "*", "-", "-", "*", "*", "-", "-", "*", "*"],
+    [
+      `${baseTN} VS ${TN}`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+      `At`,
+      `Repl`,
+      `Otro`,
+    ],
+    [
+      `At/Repl`,
+      `2d${faces}`,
+      `2d${faces}`,
+      `2d${faces}`,
+      `3d${faces}`,
+      `3d${faces}`,
+      `3d${faces}`,
+      `4d${faces}`,
+      `4d${faces}`,
+      `4d${faces}`,
+      `5d${faces}`,
+      `5d${faces}`,
+      `5d${faces}`,
+      `6d${faces}`,
+      `6d${faces}`,
+      `6d${faces}`,
+      `7d${faces}`,
+      `7d${faces}`,
+      `7d${faces}`,
+      `8d${faces}`,
+      `8d${faces}`,
+      `8d${faces}`,
+    ],
+  ];
+};
+
+const getVersusDataRows = (faces: number, targetNumber: number) => {
+  return [
+    [`2d${faces}`],
+    [`3d${faces}`],
+    [`4d${faces}`],
+    [`5d${faces}`],
+    [`6d${faces}`],
+    [`7d${faces}`],
+    [`8d${faces}`],
+  ];
+};
+
 const getDataRows = (faces: number) => {
   return [
     [`2d${faces}`],
@@ -75,7 +142,54 @@ const getDataRows = (faces: number) => {
   ];
 };
 
-export const createCSVContent = (
+export const createVersusCSVContent = (
+  simulations: number,
+  diceFaces: number,
+  targetNumberHome: number,
+  targetNumberAway: number,
+  flavorHome: Flavors,
+  flavorAway: Flavors,
+  config = defaultVersusCfg
+) => {
+  const filledRows = getVersusDataRows(diceFaces, targetNumberHome).map(
+    (row, idx) => {
+      const maxColumns = 8;
+
+      for (let col = 2; col <= maxColumns; col++) {
+        const [homeWin, awayWin, others] = simulateVersusRollGroup(
+          simulations,
+          {
+            numDice: idx + 2, // we start at 2d10 (home, left)
+            diceFaces,
+            targetNumber: targetNumberHome,
+            requiredSuccesses: 1,
+            flavor: flavorHome,
+          },
+          {
+            numDice: col, // we start at 2d10 (away, top)
+            diceFaces,
+            targetNumber: targetNumberAway,
+            requiredSuccesses: 1,
+            flavor: flavorAway,
+          },
+          config
+        );
+
+        row.push(homeWin, awayWin, others);
+      }
+
+      return row;
+    }
+  );
+
+  return getVersusBaseRows(
+    targetNumberHome,
+    targetNumberAway,
+    diceFaces
+  ).concat(filledRows);
+};
+
+export const createBasicCSVContent = (
   simulations: number,
   diceFaces: number,
   targetNumber: number,
@@ -93,11 +207,13 @@ export const createCSVContent = (
     ) {
       const [botchPercent, sucessPercent, failPercent] = simulateRollGroup(
         simulations,
-        idx + 2, // we start at 2d10
-        diceFaces,
-        targetNumber,
-        requiredSuccesses,
-        flavor
+        {
+          numDice: idx + 2, // we start at 2d10
+          diceFaces,
+          targetNumber,
+          requiredSuccesses,
+          flavor,
+        }
       );
 
       row.push(botchPercent, sucessPercent, failPercent);

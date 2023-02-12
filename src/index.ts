@@ -2,7 +2,8 @@ import { Flavors } from "./types/constants.js";
 import {
   checkAndCreateDirectory,
   createCSV,
-  createCSVContent,
+  createBasicCSVContent,
+  createVersusCSVContent,
 } from "./utils/csvBuild.js";
 import { sum } from '../napi-rs-dice/index.js'
 
@@ -29,7 +30,7 @@ const makeTheCompleteCSVTable = (
 
   checkAndCreateDirectory(dir);
 
-  const table = createCSVContent(simulations, diceFaces, targetNumber, flavor);
+  const table = createBasicCSVContent(simulations, diceFaces, targetNumber, flavor);
   const csvContent = table.map((e) => e.join(",")).join("\n");
 
   createCSV(dir, file, "\n" + csvContent);
@@ -55,7 +56,42 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
   }
 };
 
-// runSingleFlavor(Flavors.KANECRISDS)
-// runAllFlavors()
 
-console.log(sum(3, 4));
+const makeTheCompleteVersusCSVTable = (
+  simulations: number,
+  diceFaces: number,
+  homeTargetNumber: number,
+  awayTargetNumber: number,
+  flavorHome: Flavors,
+  flavorAway: Flavors
+) => {
+  console.log(`*** hTN:${homeTargetNumber} (${flavorHome}) vs aTN:${awayTargetNumber} (${flavorAway}) ***`);
+  const dir = `./build/${flavorHome}-${flavorAway}/`;
+  const file = `_d${diceFaces}_versus.csv`;
+
+  checkAndCreateDirectory(dir);
+
+  const table = createVersusCSVContent(simulations, diceFaces, homeTargetNumber, awayTargetNumber, flavorHome, flavorAway);
+  const csvContent = table.map((e) => e.join(",")).join("\n");
+
+  createCSV(dir, file, "\n" + csvContent);
+};
+
+const runVersus = () => {
+  const simulations = 1_000_000;
+  const diceFaces = 10;
+
+  for (let homeTN = 5; homeTN <= 8; homeTN++) {
+    for (let awayTN = 5; awayTN <= 8; awayTN++) {
+      makeTheCompleteVersusCSVTable(simulations, diceFaces, homeTN, awayTN, Flavors.STD, Flavors.STD);
+    }
+  }
+};
+
+//runSingleFlavor(Flavors.STD)
+// runAllFlavors()
+runVersus()
+
+
+
+

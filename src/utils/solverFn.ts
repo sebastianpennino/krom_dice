@@ -4,9 +4,12 @@
 import { DiceFaceT, FlavorMapFnResolver } from "../types/constants.js";
 import {
   AggregatorFn,
+  defaultVersusCfg,
   SolverFn,
   SolverRefObj,
   validWeightResults,
+  VersusAggregatorFn,
+  versusCfg,
 } from "../types/validValues.js";
 import { diceRoll } from "./diceRoll.js";
 
@@ -34,7 +37,7 @@ export const aggregator: AggregatorFn = (
     const extraRoll = diceRoll(1, faces);
     const currentRoll = diceRoll(numDice, faces);
     const good = currentRoll.filter((r: validWeightResults) => {
-      return r === DiceFaceT.S;
+      return r === DiceFaceT.S || r === DiceFaceT.SS;
     }).length;
     const bad = currentRoll.filter((r: validWeightResults) => {
       return r === DiceFaceT.B;
@@ -61,7 +64,14 @@ export const aggregator: AggregatorFn = (
  */
 
 /** Kane with badluck dice */
-export const crisSolverExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
+export const crisSolverExtraBotchFn: SolverFn = (
+  ref,
+  good,
+  bad,
+  nd,
+  rs,
+  cc
+) => {
   if (cc[0] === DiceFaceT.B) {
     ref.botch++;
   } else {
@@ -90,7 +100,6 @@ export const stdSolverExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
     } else {
       ref.miss++;
     }
-
   }
 };
 
@@ -227,4 +236,99 @@ export const frank50SSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
       ref.miss++;
     }
   }
+};
+
+export const versusAggregator: VersusAggregatorFn = (
+  rolls,
+  hEntry,
+  aEntry,
+  config
+) => {
+  const ref: any = {
+    totalRolls: rolls,
+    homeWin: 0,
+    awayWin: 0,
+    others: 0,
+  };
+
+  const { numDice: hND, faces: hFaces, flavor: hFlavor } = hEntry;
+
+  const { numDice: aND, faces: aFaces, flavor: aFlavor } = aEntry;
+
+  while (rolls > 0) {
+    const homeRoll = diceRoll(hND, hFaces);
+    const awayRoll = diceRoll(aND, aFaces);
+
+    // Same solver for now
+    let {
+      good: hgood,
+      extraGood: hcrit,
+      bad: hbad,
+    } = versusBaseSolver(homeRoll);
+    let {
+      good: agood,
+      extraGood: acrit,
+      bad: abad,
+    } = versusBaseSolver(awayRoll);
+
+    if (config.criticalAreDouble) {
+      hcrit = hcrit * 2;
+      acrit = acrit * 2;
+    }
+
+    const countHome = hgood + hcrit - hbad;
+    const countAway = agood + acrit - abad;
+
+    // Resolve as a single event composed of two throws
+    if (config.resolveAsContestFirst) {
+      // Checking for the away team first
+      if (countAway - countHome >= config.challengerRequiredDiff) {
+        ref.awayWin++;
+      } else {
+        ref.homeWin++;
+      }
+    } else {
+      const rst = hgood + hcrit - hbad;
+      // only check after 1 hit (1 RS)
+      if (rst >= 1) {
+        if (countAway - countHome >= config.challengerRequiredDiff) {
+          ref.awayWin++;
+        } else {
+          ref.homeWin++;
+        }
+      } else {
+        ref.others++;
+      }
+    }
+
+    rolls--;
+  }
+
+  const compare = ref.awayWin + ref.homeWin + ref.others;
+
+  if (compare !== ref.totalRolls) {
+    throw new Error(`Missing cases! ${compare} != ${ref.totalRolls}`);
+  }
+
+  return { homeWin: ref.homeWin, awayWin: ref.awayWin, others: ref.others };
+};
+
+const versusBaseSolver = (
+  homeRoll: validWeightResults[]
+): { good: number; extraGood: number; bad: number } => {
+  return homeRoll.reduce(
+    (acc, dice) => {
+      if (dice === DiceFaceT.S) {
+        acc.good++;
+      }
+      if (dice === DiceFaceT.SS) {
+        acc.good++;
+      }
+      if (dice === DiceFaceT.B) {
+        acc.bad++;
+      }
+      return acc;
+    },
+    { good: 0, extraGood: 0, bad: 0 }
+  );
 };
