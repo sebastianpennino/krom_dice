@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node build/index.js"
+    "prestart": "tsc",
+    "start": "node build/index.js"
   },
   "author": "",
   "license": "ISC",

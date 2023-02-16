@@ -3,3 +3,7 @@ some useful links:
 - https://applied-math-coding.medium.com/using-rust-from-within-node-js-or-extending-node-js-via-n-api-using-napi-rs-e022c1753cb5 (from Leandro Echevarria)
 - https://linuskarlsson.se/blog/grpc-between-rust-and-node.js/ (from Leandro Echevarria)
 - https://medium.com/@maraghiserven/ffi-programming-with-node-js-and-rust-9b6709c4ad8c (from Maximiliano Cañelas)
+
+Typescript debugging:
+
+- https://code.visualstudio.com/docs/typescript/typescript-debugging

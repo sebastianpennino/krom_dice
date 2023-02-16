@@ -88,7 +88,7 @@ const runVersus = () => {
   }
 };
 
-// runSingleFlavor(Flavors.STD)
+runSingleFlavor(Flavors.STD)
 // runAllFlavors()
 // runVersus()
 
