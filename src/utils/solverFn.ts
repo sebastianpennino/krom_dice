@@ -1,15 +1,39 @@
 /**
  * Different solver functions
  */
-import { DiceFaceT, FlavorMapFnResolver2 } from "../types/constants.js";
 import {
-  AggregatorFn,
-  NewSolverFn,
-  SolverFn,
+  DiceFaceT,
+  DiceResults,
+  FlavorMapFnResolver2,
+  Flavors,
+} from "../types/constants.js";
+import {
   validWeightResults,
   VersusAggregatorFn,
 } from "../types/validValues.js";
 import { diceRoll } from "./diceRoll.js";
+
+export type ThrownDiceResults = {
+  miss: number;
+  botch: number;
+  hit: number;
+};
+
+export type AggregatorFn = (
+  rolls: number,
+  numDice: number,
+  faces: validWeightResults[],
+  requiredSuccesses: number,
+  flavor: Flavors
+) => ThrownDiceResults;
+
+export type NewSolverFn = (
+  roll: validWeightResults[],
+  good: number,
+  bad: number,
+  rs: number,
+  extraRoll?: validWeightResults[]
+) => ThrownDiceResults;
 
 // Base loop, flavor agnostic
 export const aggregator: AggregatorFn = (
@@ -68,385 +92,202 @@ export const aggregator: AggregatorFn = (
  * Different solver functions to determine the result of a group of dices
  */
 
-/** Kane with badluck dice */
-export const crisExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
-  if (cc[0] === DiceFaceT.B) {
-    ref.botch++;
-  } else {
-    if (good >= rs) {
-      // success
-      ref.successArr[good - 1]++;
-    } else {
-      ref.miss++;
-    }
-  }
+const baseReturnObj = {
+  [DiceResults.Hit]: 0,
+  [DiceResults.Miss]: 0,
+  [DiceResults.Botch]: 0,
 };
 
 /** Kane with badluck dice */
 export const crisEBFn2: NewSolverFn = (roll, good, bad, rs, extraRoll) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
+
   if (extraRoll && extraRoll[0] === DiceFaceT.B) {
-    botch++;
+    ref[DiceResults.Botch]++;
   } else {
     if (good >= rs) {
       // success
-      hit++;
+      ref[DiceResults.Hit]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
+  return ref;
 };
 
 /* standard with badluck dice */
-export const stdSolverExtraBotchFn: SolverFn = (ref, good, bad, nd, rs, cc) => {
-  if (cc[0] === DiceFaceT.B) {
-    ref.botch++;
-  } else {
-    const rst = good - bad;
-
-    if (rst >= 0) {
-      if (rst >= rs) {
-        ref.successArr[rst - 1]++;
-      } else {
-        ref.miss++;
-      }
-    } else {
-      ref.miss++;
-    }
-  }
-};
-
-/* staroll.lengthard with badluck dice */
 export const stdSolverEBFn2: NewSolverFn = (roll, good, bad, rs, extraRoll) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   if (extraRoll && extraRoll[0] === DiceFaceT.B) {
-    botch++;
+    ref[DiceResults.Botch]++;
   } else {
     const rst = good - bad;
 
     if (rst >= 0) {
       if (rst >= rs) {
-        hit++;
+        ref[DiceResults.Hit]++;
       } else {
-        miss++;
+        ref[DiceResults.Miss]++;
       }
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
+  return ref;
 };
 
-/** Base implementation (standard) */
-export const stdSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
+/** Base implementation */
+export const stdSolver: NewSolverFn = (roll, good, bad, rs) => {
+  const ref = { ...baseReturnObj };
   const rst = good - bad;
 
   if (rst >= 0) {
     if (rst >= rs) {
-      ref.successArr[rst - 1]++;
+      ref[DiceResults.Hit]++;
     } else {
-      ref.miss++;
+      ref[DiceResults.Miss]++;
     }
   } else {
-    ref.botch++;
+    ref[DiceResults.Botch]++;
   }
-};
-
-/** Base implementation (staroll.lengthard) */
-export const stdSolverFnNewSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
-  const rst = good - bad;
-
-  if (rst >= 0) {
-    if (rst >= rs) {
-      hit++;
-    } else {
-      miss++;
-    }
-  } else {
-    botch++;
-  }
-  return { miss, hit, botch };
+  return ref;
 };
 
 /** kane: don't substract, check for good case first */
-export const kaneSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
+export const kaneSolver: NewSolverFn = (roll, good, bad, rs) => {
+  const ref = { ...baseReturnObj };
   if (good >= rs) {
-    ref.successArr[good - 1]++;
+    ref[DiceResults.Hit]++;
   } else if (good === 0 && bad > 0) {
-    ref.botch++;
+    ref[DiceResults.Botch]++;
   } else {
-    ref.miss++;
+    ref[DiceResults.Miss]++;
   }
+  return ref;
 };
 
-/** kane: don't substract, check for good case first */
-export const kaneSolverFnNewSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
-  if (good >= rs) {
-    hit++;
-  } else if (good === 0 && bad > 0) {
-    botch++;
-  } else {
-    miss++;
-  }
-  return { miss, hit, botch };
-};
-
-export const crisKaneSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
+export const kaneCrisSolver: NewSolverFn = (roll, good, bad, rs) => {
+  const ref = { ...baseReturnObj };
   if (good >= rs) {
     // success
-    ref.successArr[good - 1]++;
+    ref[DiceResults.Hit]++;
   } else {
     // not-success
     if (bad > 0) {
-      ref.botch++;
+      ref[DiceResults.Botch]++;
     } else {
-      ref.miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-};
-
-export const ckSolverFnNewSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
-  if (good >= rs) {
-    // success
-    hit++;
-  } else {
-    // not-success
-    if (bad > 0) {
-      botch++;
-    } else {
-      miss++;
-    }
-  }
-  return { miss, hit, botch };
-};
-
-export const rachelSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  const threshold = Math.ceil(nd / 2);
-
-  if (good >= rs) {
-    // success
-    ref.successArr[good - 1]++;
-  } else {
-    // not-success
-    if (bad >= threshold) {
-      ref.botch++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const rSolverFnNewSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   const threshold = Math.ceil(roll.length / 2);
 
   if (good >= rs) {
     // success
-    hit++;
+    ref[DiceResults.Hit]++;
   } else {
     // not-success
     if (bad >= threshold) {
-      botch++;
+      ref[DiceResults.Botch]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
-};
-
-export const frank25SolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  // threshold adjusted to number of thrown dice
-  const thresholdCacho25 = nd > 4 ? Math.ceil(nd / 4) : 1;
-
-  if (good >= rs) {
-    // success
-    ref.successArr[good - 1]++;
-  } else {
-    // threshold 1-4 (1) 5-8 (2)
-    if (bad >= thresholdCacho25) {
-      ref.botch++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const f25SolverFnNewSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   // threshold adjusted to number of thrown dice
   const thresholdCacho25 = roll.length > 4 ? Math.ceil(roll.length / 4) : 1;
 
   if (good >= rs) {
     // success
-    hit++;
+    ref[DiceResults.Hit]++;
   } else {
     // threshold 1-4 (1) 5-8 (2)
     if (bad >= thresholdCacho25) {
-      botch++;
+      ref[DiceResults.Botch]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
-};
-
-export const cacho25SolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  // Cacho25: at least 25% of the dice are "P" --> automatic ref.botch
-  // 1 to 4 --> 1 dice=1 --> ref.botch // 5 to 8 --> 2 dice=1 --> ref.botch
-  const thresholdCacho25 = nd > 4 ? Math.ceil(nd / 4) : 1;
-
-  if (bad >= thresholdCacho25) {
-    ref.botch++;
-  } else {
-    if (good >= rs) {
-      ref.successArr[good - 1]++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const cacho25SolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   // Cacho25: at least 25% of the dice are "P" --> automatic ref.botch
   // 1 to 4 --> 1 dice=1 --> ref.botch // 5 to 8 --> 2 dice=1 --> ref.botch
   const thresholdCacho25 = roll.length > 4 ? Math.ceil(roll.length / 4) : 1;
 
   if (bad >= thresholdCacho25) {
-    botch++;
+    ref[DiceResults.Botch]++;
   } else {
     if (good >= rs) {
-      hit++;
+      ref[DiceResults.Hit]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
-};
-
-export const cacho50SolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  // Cacho50: at least 50% of the dice are "P" --> automatic ref.botch
-  // 1 to 2 --> 1 dice=1 --> ref.botch // 3 to 4 --> 2 dice=1 --> ref.botch
-  const thresholdCacho50 = nd > 2 ? Math.ceil(nd / 2) : 1;
-
-  if (bad >= thresholdCacho50) {
-    ref.botch++;
-  } else {
-    if (good >= rs) {
-      ref.successArr[good - 1]++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const cacho50SolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   // Cacho50: at least 50% of the dice are "P" --> automatic ref.botch
   // 1 to 2 --> 1 dice=1 --> ref.botch // 3 to 4 --> 2 dice=1 --> ref.botch
   const thresholdCacho50 = roll.length > 2 ? Math.ceil(roll.length / 2) : 1;
 
   if (bad >= thresholdCacho50) {
-    botch++;
+    ref[DiceResults.Botch]++;
   } else {
     if (good >= rs) {
-      hit++;
+      ref[DiceResults.Hit]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
 
-  return { miss, hit, botch };
-};
-
-export const bobSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  // threshold is always two botch after the first required success
-  const bob = rs > 1 ? Math.ceil(rs / 2) : 1;
-
-  // Check for botch FIRST
-  if (bad >= bob) {
-    ref.botch++;
-  } else {
-    if (good >= rs) {
-      ref.successArr[good - 1]++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const bobSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   const bob = rs > 1 ? Math.ceil(rs / 2) : 1;
 
   // Check for botch FIRST
   if (bad >= bob) {
-    botch++;
+    ref[DiceResults.Botch]++;
   } else {
     if (good >= rs) {
-      hit++;
+      ref[DiceResults.Hit]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
-};
-
-export const frank50SSolverFn: SolverFn = (ref, good, bad, nd, rs) => {
-  const thresholdF50S = rs > 2 ? Math.ceil(nd / 2) : 1;
-  if (good >= rs) {
-    ref.successArr[good - 1]++;
-  } else {
-    // threshold 1-2 (1) 3-4 (2) and so on...
-    if (bad >= thresholdF50S) {
-      ref.botch++;
-    } else {
-      ref.miss++;
-    }
-  }
+  return ref;
 };
 
 export const frank50SSolverFn2: NewSolverFn = (roll, good, bad, rs) => {
-  let hit = 0,
-    miss = 0,
-    botch = 0;
+  const ref = { ...baseReturnObj };
   const thresholdF50S = rs > 2 ? Math.ceil(roll.length / 2) : 1;
 
   if (good >= rs) {
-    hit++;
+    ref[DiceResults.Hit]++;
   } else {
     // threshold 1-2 (1) 3-4 (2) and so on...
     if (bad >= thresholdF50S) {
-      botch++;
+      ref[DiceResults.Botch]++;
     } else {
-      miss++;
+      ref[DiceResults.Miss]++;
     }
   }
-  return { miss, hit, botch };
+  return ref;
 };
 
 export const versusAggregator: VersusAggregatorFn = (

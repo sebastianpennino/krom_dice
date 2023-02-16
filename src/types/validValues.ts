@@ -11,47 +11,6 @@ export type MappingFn = (
   targetNumber: number
 ) => validWeightResults;
 
-export type AggregatorFn = (
-  rolls: number,
-  numDice: number,
-  faces: validWeightResults[],
-  requiredSuccesses: number,
-  flavor: Flavors
-) => AggregatorFnReturn;
-
-export type SolverRefObj = {
-  totalRolls: number;
-  miss: number;
-  botch: number;
-  successArr: number[];
-};
-
-export type NewSolverFn = (
-  roll: validWeightResults[],
-  good: number,
-  bad: number,
-  rs: number,
-  extraRoll?: validWeightResults[]
-) => {
-  hit: number;
-  miss: number;
-  botch: number;
-};
-
-export type SolverFn = (
-  ref: SolverRefObj,
-  good: number,
-  bad: number,
-  nd: number,
-  rs: number,
-  cc?: any
-) => void;
-
-export type AggregatorFnReturn = {
-  miss: number;
-  botch: number;
-  hit: number;
-};
 
 type diceRollEntry = {
   numDice: number;

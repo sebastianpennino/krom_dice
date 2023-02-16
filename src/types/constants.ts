@@ -1,33 +1,19 @@
 import {
-  bobSolverFn,
   bobSolverFn2,
-  cacho25SolverFn,
   cacho25SolverFn2,
-  cacho50SolverFn,
   cacho50SolverFn2,
-  ckSolverFnNewSolverFn2,
+  kaneCrisSolver,
   crisEBFn2,
-  crisExtraBotchFn,
-  crisKaneSolverFn,
   f25SolverFnNewSolverFn2,
-  frank25SolverFn,
-  frank50SSolverFn,
   frank50SSolverFn2,
-  kaneSolverFn,
-  kaneSolverFnNewSolverFn2,
-  rachelSolverFn,
+  kaneSolver,
+  NewSolverFn,
   rSolverFnNewSolverFn2,
   stdSolverEBFn2,
-  stdSolverExtraBotchFn,
-  stdSolverFn,
-  stdSolverFnNewSolverFn2,
+  stdSolver,
 } from "../utils/solverFn.js";
-import {
-  baseMapFn,
-  dsMapFn,
-  plusMapFn,
-} from "../utils/mapFn.js";
-import { MappingFn, NewSolverFn, SolverFn } from "./validValues.js";
+import { baseMapFn, dsMapFn, plusMapFn } from "../utils/mapFn.js";
+import { MappingFn } from "./validValues.js";
 
 export enum Flavors {
   STD = "std",
@@ -54,7 +40,7 @@ export enum DiceFaceT {
   F = "fail",
 }
 
-export enum DiceResults  {
+export enum DiceResults {
   Hit = "hit",
   Miss = "miss",
   Botch = "botch",
@@ -78,34 +64,16 @@ export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.RACHEL]: dsMapFn, // pifia 2
 };
 
-export const FlavorMapFnResolver: Record<Flavors, SolverFn> = {
-  [Flavors.STD]: stdSolverFn,
-  [Flavors.PLUS]: stdSolverFn,
-  [Flavors.DS]: stdSolverFn,
-  [Flavors.KANE]: kaneSolverFn,
-  [Flavors.KANEDS]: kaneSolverFn,
-  [Flavors.CACHO25]: cacho25SolverFn,
-  [Flavors.CACHO50]: cacho50SolverFn,
-  [Flavors.KANECRIS]: crisKaneSolverFn,
-  [Flavors.KANECRISDS]: crisKaneSolverFn,
-  [Flavors.CC]: crisExtraBotchFn,
-  [Flavors.SCC]: stdSolverExtraBotchFn,
-  [Flavors.FRANK25]: frank25SolverFn,
-  [Flavors.FRANK50S]: frank50SSolverFn,
-  [Flavors.BOB]: bobSolverFn,
-  [Flavors.RACHEL]: rachelSolverFn,
-};
-
 export const FlavorMapFnResolver2: Record<Flavors, NewSolverFn> = {
-  [Flavors.STD]: stdSolverFnNewSolverFn2,
-  [Flavors.PLUS]: stdSolverFnNewSolverFn2,
-  [Flavors.DS]: stdSolverFnNewSolverFn2,
-  [Flavors.KANE]: kaneSolverFnNewSolverFn2,
-  [Flavors.KANEDS]: kaneSolverFnNewSolverFn2,
+  [Flavors.STD]: stdSolver,
+  [Flavors.PLUS]: stdSolver,
+  [Flavors.DS]: stdSolver,
+  [Flavors.KANE]: kaneSolver,
+  [Flavors.KANEDS]: kaneSolver,
   [Flavors.CACHO25]: cacho25SolverFn2,
   [Flavors.CACHO50]: cacho50SolverFn2,
-  [Flavors.KANECRIS]: ckSolverFnNewSolverFn2,
-  [Flavors.KANECRISDS]: ckSolverFnNewSolverFn2,
+  [Flavors.KANECRIS]: kaneCrisSolver,
+  [Flavors.KANECRISDS]: kaneCrisSolver,
   [Flavors.CC]: crisEBFn2,
   [Flavors.SCC]: stdSolverEBFn2,
   [Flavors.FRANK25]: f25SolverFnNewSolverFn2,
