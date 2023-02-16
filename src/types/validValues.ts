@@ -26,6 +26,18 @@ export type SolverRefObj = {
   successArr: number[];
 };
 
+export type NewSolverFn = (
+  roll: validWeightResults[],
+  good: number,
+  bad: number,
+  rs: number,
+  extraRoll?: validWeightResults[]
+) => {
+  hit: number;
+  miss: number;
+  botch: number;
+};
+
 export type SolverFn = (
   ref: SolverRefObj,
   good: number,
@@ -42,11 +54,11 @@ export type AggregatorFnReturn = {
 };
 
 type diceRollEntry = {
-  numDice: number,
-  faces: validWeightResults[],
-  requiredSuccesses: number,
-  flavor: Flavors
-}
+  numDice: number;
+  faces: validWeightResults[];
+  requiredSuccesses: number;
+  flavor: Flavors;
+};
 
 export type VersusAggregatorFnReturn = {
   homeWin: number;
@@ -55,11 +67,11 @@ export type VersusAggregatorFnReturn = {
 };
 
 export type versusCfg = {
-  resolveAsContestFirst: boolean,
-  criticalAreDouble: boolean,
-  challengerRequiredDiff: number,
-  title?: string
-}
+  resolveAsContestFirst: boolean;
+  criticalAreDouble: boolean;
+  challengerRequiredDiff: number;
+  title?: string;
+};
 
 export type VersusAggregatorFn = (
   rolls: number,
@@ -69,16 +81,16 @@ export type VersusAggregatorFn = (
 ) => VersusAggregatorFnReturn;
 
 export type diceRollCellEntry = {
-  numDice: number,
-  diceFaces: number,
-  targetNumber: number,
-  requiredSuccesses: number,
-  flavor: Flavors
-}
+  numDice: number;
+  diceFaces: number;
+  targetNumber: number;
+  requiredSuccesses: number;
+  flavor: Flavors;
+};
 
 export type DiceRollAggregatorFn = (
   rolls: number,
-  homeDiceroll: diceRollCellEntry,
+  homeDiceroll: diceRollCellEntry
 ) => string[];
 
 export type DiceRollAggregatorVersusFn = (
