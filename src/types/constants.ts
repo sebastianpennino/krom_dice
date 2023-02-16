@@ -1,18 +1,18 @@
+import { plusMapFn, dsMapFn, baseMapFn } from "../dice/diceMap.js";
 import {
-  bobSolverFn2,
-  cacho25SolverFn2,
-  cacho50SolverFn2,
+  SolverFn,
+  stdSolver,
+  kaneSolver,
+  cacho25Sol,
+  cacho50Sol,
   kaneCrisSolver,
   crisEBFn2,
-  f25SolverFnNewSolverFn2,
-  frank50SSolverFn2,
-  kaneSolver,
-  NewSolverFn,
-  rSolverFnNewSolverFn2,
-  stdSolverEBFn2,
-  stdSolver,
-} from "../utils/solverFn.js";
-import { baseMapFn, dsMapFn, plusMapFn } from "../utils/mapFn.js";
+  stdCCSol,
+  frank25Sol,
+  frank50Sol,
+  bobSolver,
+  rachelSolver,
+} from "../utils/solvers.js";
 import { MappingFn } from "./validValues.js";
 
 export enum Flavors {
@@ -40,13 +40,7 @@ export enum DiceFaceT {
   F = "fail",
 }
 
-export enum DiceResults {
-  Hit = "hit",
-  Miss = "miss",
-  Botch = "botch",
-}
-
-export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
+export const validDiceMappers: Record<Flavors, MappingFn> = {
   [Flavors.PLUS]: plusMapFn,
   [Flavors.DS]: dsMapFn,
   [Flavors.KANEDS]: dsMapFn,
@@ -61,23 +55,23 @@ export const FlavorMapFnRecord: Record<Flavors, MappingFn> = {
   [Flavors.FRANK25]: baseMapFn,
   [Flavors.FRANK50S]: baseMapFn,
   [Flavors.BOB]: baseMapFn,
-  [Flavors.RACHEL]: dsMapFn, // pifia 2
+  [Flavors.RACHEL]: dsMapFn,
 };
 
-export const FlavorMapFnResolver2: Record<Flavors, NewSolverFn> = {
+export const validSolvers: Record<Flavors, SolverFn> = {
   [Flavors.STD]: stdSolver,
   [Flavors.PLUS]: stdSolver,
   [Flavors.DS]: stdSolver,
   [Flavors.KANE]: kaneSolver,
   [Flavors.KANEDS]: kaneSolver,
-  [Flavors.CACHO25]: cacho25SolverFn2,
-  [Flavors.CACHO50]: cacho50SolverFn2,
+  [Flavors.CACHO25]: cacho25Sol,
+  [Flavors.CACHO50]: cacho50Sol,
   [Flavors.KANECRIS]: kaneCrisSolver,
   [Flavors.KANECRISDS]: kaneCrisSolver,
   [Flavors.CC]: crisEBFn2,
-  [Flavors.SCC]: stdSolverEBFn2,
-  [Flavors.FRANK25]: f25SolverFnNewSolverFn2,
-  [Flavors.FRANK50S]: frank50SSolverFn2,
-  [Flavors.BOB]: bobSolverFn2,
-  [Flavors.RACHEL]: rSolverFnNewSolverFn2,
+  [Flavors.SCC]: stdCCSol,
+  [Flavors.FRANK25]: frank25Sol,
+  [Flavors.FRANK50S]: frank50Sol,
+  [Flavors.BOB]: bobSolver,
+  [Flavors.RACHEL]: rachelSolver,
 };

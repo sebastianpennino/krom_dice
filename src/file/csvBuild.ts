@@ -1,7 +1,8 @@
-import { appendFileSync, existsSync, mkdirSync, rmSync } from "fs";
-import { defaultVersusCfg } from "../types/validValues.js";
+import { simulateVersusRollGroup, simulateRollGroup } from "../dice/diceRoll.js";
+import { existsSync, mkdirSync, rmSync, appendFileSync } from "fs";
 import { Flavors } from "../types/constants.js";
-import { simulateRollGroup, simulateVersusRollGroup } from "./diceRoll.js";
+import { defaultVersusCfg } from "../types/validValues.js";
+
 
 const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
   return [

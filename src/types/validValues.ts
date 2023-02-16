@@ -64,3 +64,21 @@ export const defaultVersusCfg: versusCfg = {
   criticalAreDouble: false,
   challengerRequiredDiff: 0,
 };
+
+export type ThrownDiceResults = {
+  miss: number;
+  botch: number;
+  hit: number;
+};
+
+export enum DiceResults {
+  HIT = "hit",
+  MISS = "miss",
+  BOTCH = "botch",
+}
+
+export const baseReturnObj = {
+  [DiceResults.HIT]: 0,
+  [DiceResults.MISS]: 0,
+  [DiceResults.BOTCH]: 0,
+};

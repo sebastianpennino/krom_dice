@@ -1,12 +1,8 @@
-import { FlavorMapFnRecord, Flavors } from "../types/constants.js";
-import {
-  defaultVersusCfg,
-  DiceRollAggregatorFn,
-  DiceRollAggregatorVersusFn,
-  diceRollCellEntry,
-} from "../types/validValues.js";
-import { aggregator, versusAggregator } from "./solverFn.js";
+import { validDiceMappers } from "../types/constants.js";
+import { DiceRollAggregatorFn, diceRollCellEntry, DiceRollAggregatorVersusFn } from "../types/validValues.js";
+import { aggregator, versusAggregator } from "../utils/aggregators.js";
 import { generateDiceFacesWithWeightValues } from "./diceFaces.js";
+
 
 export const randomIntFromInterval = (min = 1, max = 6) => {
   return Math.floor(Math.random() * (max - min + 1) + min); // min and max included
@@ -34,7 +30,7 @@ export const simulateRollGroup: DiceRollAggregatorFn = (
   console.log(
     `** Simulating ${rolls} of ${numDice}d${diceFaces} ** [TN: ${targetNumber}] (R: ${requiredSuccesses}) **`
   );
-  const mappingFn = FlavorMapFnRecord[flavor];
+  const mappingFn = validDiceMappers[flavor];
   const faces = generateDiceFacesWithWeightValues(
     diceFaces,
     targetNumber,
@@ -75,9 +71,9 @@ export const simulateVersusRollGroup: DiceRollAggregatorVersusFn = (
   console.log(
     `** Sim ${rolls} of home: < ${hND}d${hDF} ** [TN: ${hTN}] > vs < ${aND}d${aDF} ** [TN: ${aTN}] >`
   );
-  const homeMappingFn = FlavorMapFnRecord[hFlavor];
+  const homeMappingFn = validDiceMappers[hFlavor];
   const homeFaces = generateDiceFacesWithWeightValues(hDF, hTN, homeMappingFn);
-  const awayMappingFn = FlavorMapFnRecord[aFlavor];
+  const awayMappingFn = validDiceMappers[aFlavor];
   const awayFaces = generateDiceFacesWithWeightValues(aDF, aTN, awayMappingFn);
 
   const { homeWin, awayWin, others } = versusAggregator(
