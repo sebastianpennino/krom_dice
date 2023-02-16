@@ -1,146 +1,101 @@
-import { simulateVersusRollGroup, simulateRollGroup } from "../dice/diceRoll.js";
+import {
+  simulateVersusRollGroup,
+  simulateRollGroup,
+} from "../dice/diceRoll.js";
 import { existsSync, mkdirSync, rmSync, appendFileSync } from "fs";
 import { Flavors } from "../types/constants.js";
 import { defaultVersusCfg } from "../types/validValues.js";
 
+type BaseRows = (
+  titleElements: {
+    targetNumber: number;
+    flavor?: Flavors;
+    botchLabel?: string;
+    hitLabel?: string;
+    missLabel?: string;
+  },
+  requiredSuccessesToDisplay?: number
+) => string[][];
 
-const getBaseRows = (targetNumber: number, flavor?: Flavors) => {
-  return [
-    [`${flavor}`, "*", "*", "*", "-", "-", "-", "*", "*", "*", "-", "-", "-"],
-    [
-      "TN:",
-      "1R",
-      "1R",
-      "1R",
-      "2R",
-      "2R",
-      "2R",
-      "3R",
-      "3R",
-      "3R",
-      "4R",
-      "4R",
-      "4R",
-      "5R",
-      "5R",
-      "5R",
-      "6R",
-      "6R",
-      "6R",
-      "7R",
-      "7R",
-      "7R",
-    ],
-    [
-      `${targetNumber}`,
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-      "Botch",
-      "Hit",
-      "Miss",
-    ],
-  ];
+const buildBaseRows: BaseRows = (
+  {
+    targetNumber = 3,
+    flavor = Flavors.STD,
+    botchLabel = "Botch",
+    hitLabel = "Hit",
+    missLabel = "Miss",
+  },
+  requiredSuccessesToDisplay = 4
+) => {
+  const firstRow = [`${flavor}`];
+  const secondRow = ["TN:"];
+  const thirdRow = [`${targetNumber}`];
+  for (let i = 1; i <= requiredSuccessesToDisplay; i++) {
+    if (i % 2 === 0) {
+      firstRow.push("*", "*", "*");
+    } else {
+      firstRow.push("-", "-", "-");
+    }
+    secondRow.push(`${i}R`, `${i}R`, `${i}R`);
+    thirdRow.push(botchLabel, hitLabel, missLabel);
+  }
+
+  return [firstRow, secondRow, thirdRow];
 };
 
-const getVersusBaseRows = (baseTN: number, TN: number, faces: number) => {
-  return [
-    ["-", "*", "*", "-", "-", "*", "*", "-", "-", "*", "*", "-", "-", "*", "*"],
-    [
-      `${baseTN} VS ${TN}`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-      `At`,
-      `Repl`,
-      `Otro`,
-    ],
-    [
-      `At/Repl`,
-      `2d${faces}`,
-      `2d${faces}`,
-      `2d${faces}`,
-      `3d${faces}`,
-      `3d${faces}`,
-      `3d${faces}`,
-      `4d${faces}`,
-      `4d${faces}`,
-      `4d${faces}`,
-      `5d${faces}`,
-      `5d${faces}`,
-      `5d${faces}`,
-      `6d${faces}`,
-      `6d${faces}`,
-      `6d${faces}`,
-      `7d${faces}`,
-      `7d${faces}`,
-      `7d${faces}`,
-      `8d${faces}`,
-      `8d${faces}`,
-      `8d${faces}`,
-    ],
-  ];
+type DataRows = (
+  faces?: number,
+  numDiceToDisplay?: number,
+  startsAt?: number
+) => string[][];
+
+const buildDataRows: DataRows = (
+  faces = 10,
+  numDiceToDisplay = 10,
+  startsAt = 2
+) => {
+  const dataRows = [];
+  // We start at two deliberately
+  for (let i = startsAt; i <= numDiceToDisplay; i++) {
+    dataRows.push([`${i}d${faces}`]);
+  }
+  return dataRows;
 };
 
-const getVersusDataRows = (faces: number, targetNumber: number) => {
-  return [
-    [`2d${faces}`],
-    [`3d${faces}`],
-    [`4d${faces}`],
-    [`5d${faces}`],
-    [`6d${faces}`],
-    [`7d${faces}`],
-    [`8d${faces}`],
-  ];
-};
+type VersusDataRows = (
+  config: {
+    homeTN?: number;
+    awayTN?: number;
+    flavor?: Flavors;
+    diceFaces?: number;
+  },
+  loops?: number,
+  startAt?: number
+) => string[][];
 
-const getDataRows = (faces: number) => {
-  return [
-    [`2d${faces}`],
-    [`3d${faces}`],
-    [`4d${faces}`],
-    [`5d${faces}`],
-    [`6d${faces}`],
-    [`7d${faces}`],
-    [`8d${faces}`],
-    [`9d${faces}`],
-    [`10d${faces}`],
-    [`11d${faces}`],
-    [`12d${faces}`],
-    [`13d${faces}`],
-    [`14d${faces}`],
-    [`15d${faces}`],
-  ];
+const buildVersusBaseRows: VersusDataRows = (
+  { homeTN = 3, awayTN = 3, flavor = Flavors.STD, diceFaces = 10 },
+  loops = 8,
+  startAt = 2
+) => {
+  const firstRow = [`${flavor}`];
+  const secondRow = [`${homeTN} VS ${awayTN}`];
+  const thirdRow = [`At/Repl`];
+  for (let i = startAt; i <= loops; i++) {
+    if (i % 2 === 0) {
+      firstRow.push("*", "*", "*");
+    } else {
+      firstRow.push("-", "-", "-");
+    }
+    secondRow.push(`At`, `Repl`, `Otro`);
+    thirdRow.push(
+      `${i}d${diceFaces}`,
+      `${i}d${diceFaces}`,
+      `${i}d${diceFaces}`
+    );
+  }
+
+  return [firstRow, secondRow, thirdRow];
 };
 
 export const createVersusCSVContent = (
@@ -152,58 +107,61 @@ export const createVersusCSVContent = (
   flavorAway: Flavors,
   config = defaultVersusCfg
 ) => {
-  const filledRows = getVersusDataRows(diceFaces, targetNumberHome).map(
-    (row, idx) => {
-      const maxColumns = 8;
+  const filledRows = buildDataRows(diceFaces).map((row, idx) => {
+    const maxColumns = 8;
 
-      for (let col = 2; col <= maxColumns; col++) {
-        const [homeWin, awayWin, others] = simulateVersusRollGroup(
-          simulations,
-          {
-            numDice: idx + 2, // we start at 2d10 (home, left)
-            diceFaces,
-            targetNumber: targetNumberHome,
-            requiredSuccesses: 1,
-            flavor: flavorHome,
-          },
-          {
-            numDice: col, // we start at 2d10 (away, top)
-            diceFaces,
-            targetNumber: targetNumberAway,
-            requiredSuccesses: 1,
-            flavor: flavorAway,
-          },
-          config
-        );
+    for (let col = 2; col <= maxColumns; col++) {
+      const [homeWin, awayWin, others] = simulateVersusRollGroup(
+        simulations,
+        {
+          numDice: idx + 2, // we start at 2d10 (home, left)
+          diceFaces,
+          targetNumber: targetNumberHome,
+          requiredSuccesses: 1,
+          flavor: flavorHome,
+        },
+        {
+          numDice: col, // we start at 2d10 (away, top)
+          diceFaces,
+          targetNumber: targetNumberAway,
+          requiredSuccesses: 1,
+          flavor: flavorAway,
+        },
+        config
+      );
 
-        row.push(homeWin, awayWin, others);
-      }
-
-      return row;
+      row.push(homeWin, awayWin, others);
     }
-  );
 
-  return getVersusBaseRows(
-    targetNumberHome,
-    targetNumberAway,
-    diceFaces
-  ).concat(filledRows);
+    return row;
+  });
+
+  return buildVersusBaseRows({
+    homeTN: targetNumberHome,
+    awayTN: targetNumberAway,
+    diceFaces,
+  }).concat(filledRows);
 };
 
-export const createBasicCSVContent = (
+type BuildCVS = (
   simulations: number,
   diceFaces: number,
   targetNumber: number,
-  flavor: Flavors
+  flavor: Flavors,
+  requiredSuccessesToDisplay: number
+) => string[][];
+
+export const createBasicCSVContent: BuildCVS = (
+  simulations,
+  diceFaces,
+  targetNumber,
+  flavor,
+  requiredSuccessesToDisplay
 ) => {
-  const filledRows = getDataRows(diceFaces).map((row, idx) => {
-    //const maxLoops = 4; // 1 to 4 required successes (hardcoded)
-
-    const maxLoops = 7; // 1 to 7 required successes (hardcoded)
-
+  const filledRows = buildDataRows(diceFaces, 10).map((row, idx) => {
     for (
       let requiredSuccesses = 1;
-      requiredSuccesses <= maxLoops;
+      requiredSuccesses <= requiredSuccessesToDisplay;
       requiredSuccesses++
     ) {
       const [botchPercent, sucessPercent, failPercent] = simulateRollGroup(
@@ -223,7 +181,9 @@ export const createBasicCSVContent = (
     return row;
   });
 
-  return getBaseRows(targetNumber, flavor).concat(filledRows);
+  return buildBaseRows({ targetNumber }, requiredSuccessesToDisplay).concat(
+    filledRows
+  );
 };
 
 export const checkAndCreateDirectory = (dir: string) => {

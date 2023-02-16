@@ -5,7 +5,7 @@ import {
   createBasicCSVContent,
   createVersusCSVContent,
 } from "./file/csvBuild.js";
-import { sum } from '../napi-rs-dice/index.js'
+import { sum } from "../napi-rs-dice/index.js";
 
 const makeTheCompleteCSVTable = (
   simulations: number,
@@ -14,23 +14,18 @@ const makeTheCompleteCSVTable = (
   flavor: Flavors
 ) => {
   console.log(`*** ${flavor} - TN:${targetNumber} ***`);
-  const dir = `./build/${flavor}/`;
-
-  const direction: Record<number, string> = {
-    4: "Left",
-    5: "Right",
-    6: "Left",
-    7: "Right",
-    8: "Left",
-    9: "Right",
-  };
-
-  // const file = `${flavor}_d${diceFaces}_${direction[targetNumber]}.csv`;
+  const dir = `./build/out/${flavor}/`;
   const file = `${flavor}_d${diceFaces}_unified.csv`;
 
   checkAndCreateDirectory(dir);
 
-  const table = createBasicCSVContent(simulations, diceFaces, targetNumber, flavor);
+  const table = createBasicCSVContent(
+    simulations,
+    diceFaces,
+    targetNumber,
+    flavor,
+    4
+  );
   const csvContent = table.map((e) => e.join(",")).join("\n");
 
   createCSV(dir, file, "\n" + csvContent);
@@ -56,7 +51,6 @@ const runSingleFlavor = (flavor: Flavors = Flavors.STD) => {
   }
 };
 
-
 const makeTheCompleteVersusCSVTable = (
   simulations: number,
   diceFaces: number,
@@ -65,13 +59,22 @@ const makeTheCompleteVersusCSVTable = (
   flavorHome: Flavors,
   flavorAway: Flavors
 ) => {
-  console.log(`*** hTN:${homeTargetNumber} (${flavorHome}) vs aTN:${awayTargetNumber} (${flavorAway}) ***`);
-  const dir = `./build/${flavorHome}-${flavorAway}/`;
+  console.log(
+    `*** hTN:${homeTargetNumber} (${flavorHome}) vs aTN:${awayTargetNumber} (${flavorAway}) ***`
+  );
+  const dir = `./build/out/${flavorHome}-${flavorAway}/`;
   const file = `_d${diceFaces}_versus.csv`;
 
   checkAndCreateDirectory(dir);
 
-  const table = createVersusCSVContent(simulations, diceFaces, homeTargetNumber, awayTargetNumber, flavorHome, flavorAway);
+  const table = createVersusCSVContent(
+    simulations,
+    diceFaces,
+    homeTargetNumber,
+    awayTargetNumber,
+    flavorHome,
+    flavorAway
+  );
   const csvContent = table.map((e) => e.join(",")).join("\n");
 
   createCSV(dir, file, "\n" + csvContent);
@@ -83,15 +86,18 @@ const runVersus = () => {
 
   for (let homeTN = 5; homeTN <= 8; homeTN++) {
     for (let awayTN = 5; awayTN <= 8; awayTN++) {
-      makeTheCompleteVersusCSVTable(simulations, diceFaces, homeTN, awayTN, Flavors.STD, Flavors.STD);
+      makeTheCompleteVersusCSVTable(
+        simulations,
+        diceFaces,
+        homeTN,
+        awayTN,
+        Flavors.STD,
+        Flavors.STD
+      );
     }
   }
 };
 
-runSingleFlavor(Flavors.STD)
+runSingleFlavor(Flavors.STD);
 // runAllFlavors()
 // runVersus()
-
-
-
-
