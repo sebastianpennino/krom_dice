@@ -5,7 +5,7 @@ import {
   createBasicCSVContent,
   createVersusCSVContent,
 } from "./file/csvBuild.js";
-import { sum } from "../napi-rs-dice/index.js";
+import { testTwo } from "../napi-rs-dice/index.js";
 
 const makeTheCompleteCSVTable = (
   simulations: number,
@@ -98,6 +98,7 @@ const runVersus = () => {
   }
 };
 
-runSingleFlavor(Flavors.STD);
+testTwo()
+// runSingleFlavor(Flavors.STD);
 // runAllFlavors()
 // runVersus()

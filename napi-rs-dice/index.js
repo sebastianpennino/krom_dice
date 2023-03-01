@@ -246,6 +246,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { sum } = nativeBinding
+const { randomIntFromInterval, testTwo } = nativeBinding
 
-module.exports.sum = sum
+module.exports.randomIntFromInterval = randomIntFromInterval
+module.exports.testTwo = testTwo
