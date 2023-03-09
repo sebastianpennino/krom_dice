@@ -192,9 +192,9 @@ export const createBasicCSVContent: BuildCVS = (
         row.push(
           botchPercent,
           sucessPercent,
-          rest[0],
-          rest[1],
-          rest[2],
+          rest[0], // 1 crit
+          rest[1], // 2 crit
+          rest[2], // 3 or more crits
           failPercent
         );
       } else {

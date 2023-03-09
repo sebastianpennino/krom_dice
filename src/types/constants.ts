@@ -13,7 +13,7 @@ import {
   bobSolver,
   rachelSolver,
   stdSolverWithCrits,
-  stdSolverWithCritsStrict,
+  stdSolverWithCritsS,
 } from "../utils/solvers.js";
 import { MappingFn } from "./validValues.js";
 
@@ -67,7 +67,7 @@ export const validDiceMappers: Record<Flavors, MappingFn> = {
 export const validSolvers: Record<Flavors, SolverFn> = {
   [Flavors.STD]: stdSolver,
   [Flavors.STD_CRITS]: stdSolverWithCrits,
-  [Flavors.STD_CRITS_STRICT]: stdSolverWithCritsStrict,
+  [Flavors.STD_CRITS_STRICT]: stdSolverWithCritsS,
   [Flavors.PLUS]: stdSolver,
   [Flavors.DS]: stdSolver,
   [Flavors.KANE]: kaneSolver,
