@@ -69,6 +69,14 @@ export type ThrownDiceResults = {
   miss: number;
   botch: number;
   hit: number;
+  crits?: number; // number of critical hits
+};
+
+export type ThrownDiceResults2 = {
+  miss: number;
+  botch: number;
+  hit: number;
+  crits?: number[]; // number of critical hits ordered by position
 };
 
 export enum DiceResults {

@@ -98,7 +98,7 @@ const runVersus = () => {
   }
 };
 
-testTwo()
-// runSingleFlavor(Flavors.STD);
+// testTwo()
+runSingleFlavor(Flavors.STD_WITH_CRITS);
 // runAllFlavors()
 // runVersus()

@@ -30,15 +30,28 @@ const buildBaseRows: BaseRows = (
   const firstRow = [`${flavor}`];
   const secondRow = ["TN:"];
   const thirdRow = [`${targetNumber}`];
-  for (let i = 1; i <= requiredSuccessesToDisplay; i++) {
-    if (i % 2 === 0) {
-      firstRow.push("*", "*", "*");
-    } else {
-      firstRow.push("-", "-", "-");
+  if(flavor === Flavors.STD_WITH_CRITS) {
+    for (let i = 1; i <= requiredSuccessesToDisplay; i++) {
+      if (i % 2 === 0) {
+        firstRow.push("*", "*", ".", ".", ".", "*");
+      } else {
+        firstRow.push("-", "-", ".", ".", ".", "-");
+      }
+      secondRow.push(`${i}R`, `${i}R`, `${i}R`, `${i}R`, `${i}R`, `${i}R`);
+      thirdRow.push(botchLabel, hitLabel, "(1C)", "(2C)", "(C+)", missLabel);
     }
-    secondRow.push(`${i}R`, `${i}R`, `${i}R`);
-    thirdRow.push(botchLabel, hitLabel, missLabel);
+  } else {
+    for (let i = 1; i <= requiredSuccessesToDisplay; i++) {
+      if (i % 2 === 0) {
+        firstRow.push("*", "*", "*");
+      } else {
+        firstRow.push("-", "-", "-");
+      }
+      secondRow.push(`${i}R`, `${i}R`, `${i}R`);
+      thirdRow.push(botchLabel, hitLabel, missLabel);
+    }
   }
+
 
   return [firstRow, secondRow, thirdRow];
 };
@@ -164,24 +177,33 @@ export const createBasicCSVContent: BuildCVS = (
       requiredSuccesses <= requiredSuccessesToDisplay;
       requiredSuccesses++
     ) {
-      const [botchPercent, sucessPercent, failPercent] = simulateRollGroup(
-        simulations,
-        {
+      const [botchPercent, sucessPercent, failPercent, ...rest] =
+        simulateRollGroup(simulations, {
           numDice: idx + 2, // we start at 2d10
           diceFaces,
           targetNumber,
           requiredSuccesses,
           flavor,
-        }
-      );
+        });
 
-      row.push(botchPercent, sucessPercent, failPercent);
+      if (rest[0] !== "" && flavor === Flavors.STD_WITH_CRITS) {
+        row.push(
+          botchPercent,
+          sucessPercent,
+          rest[0],
+          rest[1],
+          rest[2],
+          failPercent
+        );
+      } else {
+        row.push(botchPercent, sucessPercent, failPercent);
+      }
     }
 
     return row;
   });
 
-  return buildBaseRows({ targetNumber }, requiredSuccessesToDisplay).concat(
+  return buildBaseRows({ targetNumber, flavor }, requiredSuccessesToDisplay).concat(
     filledRows
   );
 };

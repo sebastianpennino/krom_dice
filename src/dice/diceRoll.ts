@@ -1,8 +1,11 @@
 import { validDiceMappers } from "../types/constants.js";
-import { DiceRollAggregatorFn, diceRollCellEntry, DiceRollAggregatorVersusFn } from "../types/validValues.js";
+import {
+  DiceRollAggregatorFn,
+  diceRollCellEntry,
+  DiceRollAggregatorVersusFn,
+} from "../types/validValues.js";
 import { aggregator, versusAggregator } from "../utils/aggregators.js";
 import { generateDiceFacesWithWeightValues } from "./diceFaces.js";
-
 
 export const randomIntFromInterval = (min = 1, max = 6) => {
   return Math.floor(Math.random() * (max - min + 1) + min); // min and max included
@@ -36,17 +39,29 @@ export const simulateRollGroup: DiceRollAggregatorFn = (
     targetNumber,
     mappingFn
   );
-  const { miss, botch, hit } = aggregator(
+  const { miss, botch, hit, crits } = aggregator(
     rolls,
     numDice,
     faces,
     requiredSuccesses,
     flavor
   );
+  let mappedCrits = [""];
+
+  if (crits && Array.isArray(crits)) {
+    mappedCrits = crits.map((n) => {
+      if (n) {
+        return Number(n / rolls).toFixed(3);
+      }
+      return "0.00";
+    });
+  }
+
   return [
     Number(botch / rolls).toFixed(3),
     Number(hit / rolls).toFixed(3),
     Number(miss / rolls).toFixed(3),
+    ...mappedCrits,
   ];
 };
 

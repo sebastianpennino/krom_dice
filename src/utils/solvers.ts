@@ -2,7 +2,12 @@
  * Different solver functions to determine the result of a group of dices
  */
 import { DiceFaceT } from "../types/constants.js";
-import { validWeightResults, ThrownDiceResults, baseReturnObj, DiceResults } from "../types/validValues.js";
+import {
+  validWeightResults,
+  ThrownDiceResults,
+  baseReturnObj,
+  DiceResults,
+} from "../types/validValues.js";
 
 export type SolverFn = (
   roll: validWeightResults[],
@@ -12,6 +17,13 @@ export type SolverFn = (
   extraRoll?: validWeightResults[]
 ) => ThrownDiceResults;
 
+export type SolverFnWithCrits = (
+  roll: validWeightResults[],
+  good: number,
+  bad: number,
+  rs: number,
+  extraRoll?: validWeightResults[]
+) => ThrownDiceResults & { crits: number };
 
 /** Kane with badluck dice */
 export const crisEBFn2: SolverFn = (roll, good, bad, rs, extraRoll) => {
@@ -58,6 +70,25 @@ export const stdSolver: SolverFn = (roll, good, bad, rs) => {
 
   if (rst >= 0) {
     if (rst >= rs) {
+      ref[DiceResults.HIT]++;
+    } else {
+      ref[DiceResults.MISS]++;
+    }
+  } else {
+    ref[DiceResults.BOTCH]++;
+  }
+  return ref;
+};
+
+export const stdSolverWithCriticalHit: SolverFn = (roll, good, bad, rs) => {
+  const ref = { ...baseReturnObj, crits: 0 };
+  const rst = good - bad;
+
+  const crits = roll.filter(r => r === DiceFaceT.SS).length
+
+  if (rst >= 0) {
+    if (rst >= rs) {
+      ref['crits'] = crits;
       ref[DiceResults.HIT]++;
     } else {
       ref[DiceResults.MISS]++;

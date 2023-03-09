@@ -1,8 +1,11 @@
 import { diceRoll } from "../dice/diceRoll.js";
 import { Flavors, DiceFaceT, validSolvers } from "../types/constants.js";
-import { validWeightResults, ThrownDiceResults, VersusAggregatorFn } from "../types/validValues.js";
+import {
+  validWeightResults,
+  ThrownDiceResults2,
+  VersusAggregatorFn,
+} from "../types/validValues.js";
 import { versusBaseSolver } from "./solvers.js";
-
 
 export type AggregatorFn = (
   rolls: number,
@@ -10,7 +13,7 @@ export type AggregatorFn = (
   faces: validWeightResults[],
   requiredSuccesses: number,
   flavor: Flavors
-) => ThrownDiceResults;
+) => ThrownDiceResults2;
 
 export const countResults = (
   roll: validWeightResults[]
@@ -45,6 +48,7 @@ export const aggregator: AggregatorFn = (
     miss: 0,
     botch: 0,
     hit: 0,
+    crits: [0, 0, 0, 0],
   };
 
   const solver = validSolvers[flavor];
@@ -54,7 +58,7 @@ export const aggregator: AggregatorFn = (
     const currentRoll = diceRoll(numDice, faces);
     const { good, bad } = countResults(currentRoll);
 
-    const { miss, hit, botch } = solver(
+    const { miss, hit, botch, crits } = solver(
       currentRoll,
       good,
       bad,
@@ -66,6 +70,15 @@ export const aggregator: AggregatorFn = (
     ref.botch += botch;
     ref.hit += hit;
 
+    // Save critical hits on position [3,4...] -> 3 with 1 critical, 4 with two, etc
+    if (crits && crits > 0) {
+      // if (!ref.crits[crits - 1]) {
+      //   ref.crits[crits - 1] = 0;
+      // }
+      const limit = crits - 1 > 2 ? 3 : crits - 1;
+      ref.crits[limit]++;
+    }
+
     rolls--;
   }
 
@@ -75,7 +88,7 @@ export const aggregator: AggregatorFn = (
     throw new Error(`Missing cases! ${compare} != ${ref.totalRolls}`);
   }
 
-  return { miss: ref.miss, botch: ref.botch, hit: ref.hit };
+  return { miss: ref.miss, botch: ref.botch, hit: ref.hit, crits: ref.crits };
 };
 
 export const versusAggregator: VersusAggregatorFn = (

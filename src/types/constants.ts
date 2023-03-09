@@ -12,11 +12,13 @@ import {
   frank50Sol,
   bobSolver,
   rachelSolver,
+  stdSolverWithCriticalHit,
 } from "../utils/solvers.js";
 import { MappingFn } from "./validValues.js";
 
 export enum Flavors {
   STD = "std",
+  STD_WITH_CRITS = "std-ch",
   PLUS = "plus",
   DS = "darksouls",
   KANE = "kane",
@@ -45,6 +47,7 @@ export const validDiceMappers: Record<Flavors, MappingFn> = {
   [Flavors.DS]: dsMapFn,
   [Flavors.KANEDS]: dsMapFn,
   [Flavors.STD]: baseMapFn,
+  [Flavors.STD_WITH_CRITS]: plusMapFn, //baseMapFn,
   [Flavors.KANE]: baseMapFn,
   [Flavors.CACHO25]: baseMapFn,
   [Flavors.CACHO50]: baseMapFn,
@@ -60,6 +63,7 @@ export const validDiceMappers: Record<Flavors, MappingFn> = {
 
 export const validSolvers: Record<Flavors, SolverFn> = {
   [Flavors.STD]: stdSolver,
+  [Flavors.STD_WITH_CRITS]: stdSolverWithCriticalHit,
   [Flavors.PLUS]: stdSolver,
   [Flavors.DS]: stdSolver,
   [Flavors.KANE]: kaneSolver,
