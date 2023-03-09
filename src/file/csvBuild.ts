@@ -30,7 +30,7 @@ const buildBaseRows: BaseRows = (
   const firstRow = [`${flavor}`];
   const secondRow = ["TN:"];
   const thirdRow = [`${targetNumber}`];
-  if(flavor === Flavors.STD_WITH_CRITS) {
+  if (flavor === Flavors.STD_CRITS || flavor === Flavors.STD_CRITS_STRICT) {
     for (let i = 1; i <= requiredSuccessesToDisplay; i++) {
       if (i % 2 === 0) {
         firstRow.push("*", "*", ".", ".", ".", "*");
@@ -51,7 +51,6 @@ const buildBaseRows: BaseRows = (
       thirdRow.push(botchLabel, hitLabel, missLabel);
     }
   }
-
 
   return [firstRow, secondRow, thirdRow];
 };
@@ -186,7 +185,10 @@ export const createBasicCSVContent: BuildCVS = (
           flavor,
         });
 
-      if (rest[0] !== "" && flavor === Flavors.STD_WITH_CRITS) {
+      if (
+        rest[0] !== "" &&
+        (flavor === Flavors.STD_CRITS || flavor === Flavors.STD_CRITS_STRICT)
+      ) {
         row.push(
           botchPercent,
           sucessPercent,
@@ -203,9 +205,10 @@ export const createBasicCSVContent: BuildCVS = (
     return row;
   });
 
-  return buildBaseRows({ targetNumber, flavor }, requiredSuccessesToDisplay).concat(
-    filledRows
-  );
+  return buildBaseRows(
+    { targetNumber, flavor },
+    requiredSuccessesToDisplay
+  ).concat(filledRows);
 };
 
 export const checkAndCreateDirectory = (dir: string) => {

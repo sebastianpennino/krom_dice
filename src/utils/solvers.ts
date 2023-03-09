@@ -80,7 +80,7 @@ export const stdSolver: SolverFn = (roll, good, bad, rs) => {
   return ref;
 };
 
-export const stdSolverWithCriticalHit: SolverFn = (roll, good, bad, rs) => {
+export const stdSolverWithCrits: SolverFnWithCrits = (roll, good, bad, rs) => {
   const ref = { ...baseReturnObj, crits: 0 };
   const rst = good - bad;
 
@@ -89,6 +89,31 @@ export const stdSolverWithCriticalHit: SolverFn = (roll, good, bad, rs) => {
   if (rst >= 0) {
     if (rst >= rs) {
       ref['crits'] = crits;
+      ref[DiceResults.HIT]++;
+    } else {
+      ref[DiceResults.MISS]++;
+    }
+  } else {
+    ref[DiceResults.BOTCH]++;
+  }
+  return ref;
+};
+
+// TODO: this is very wrong but I don't know why. Investigate.
+export const stdSolverWithCritsStrict: SolverFnWithCrits = (roll, good, bad, rs) => {
+  const ref = { ...baseReturnObj, crits: 0 };
+  const rst = good - bad;
+
+  const sc = roll.filter(r => r === DiceFaceT.SS).length
+  const sg = roll.filter(r => r === DiceFaceT.S).length
+  const sb = roll.filter(r => r === DiceFaceT.B).length
+  const int = sg - sb
+
+  if (rst >= 0) {
+    if (rst >= rs) {
+      if (sc - int > 0) {
+        ref['crits'] = sc - int
+      }
       ref[DiceResults.HIT]++;
     } else {
       ref[DiceResults.MISS]++;
